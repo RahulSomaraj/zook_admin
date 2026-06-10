@@ -44,12 +44,12 @@ export default function Sidebar() {
   const [active, setActive] = useState("product-catalog");
 
   return (
-    <div className="w-64 min-h-screen bg-[#111318] flex flex-col select-none">
+    <div className="w-64 min-h-screen bg-black flex flex-col select-none">
       {/* Logo */}
       <div className="px-5 pt-6 pb-5">
         <div className="flex items-center gap-2">
-          <span className="text-orange-500 font-black text-2xl tracking-widest">ZOOK</span>
-          <span className="bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full tracking-widest">
+          <span className="text-orange-600 font-black text-2xl tracking-widest">ZOOK</span>
+          <span className="bg-orange-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full tracking-widest">
             ADMIN
           </span>
         </div>
@@ -60,7 +60,7 @@ export default function Sidebar() {
 
       {/* User profile */}
       <div className="px-4 mb-6 flex items-center gap-3">
-        <div className="w-10 h-10 rounded-lg bg-orange-500 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+        <div className="w-10 h-10 rounded-lg bg-orange-600 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
           ZA
         </div>
         <div>
@@ -90,7 +90,7 @@ export default function Sidebar() {
                     text-sm font-medium transition-all duration-150 relative
                     ${
                       isActive
-                        ? "bg-[#1e1f26] text-orange-500 border-l-[3px] border-orange-500 pl-[9px]"
+                        ? "bg-[#1e1f26] text-orange-600 border-l-[3px] border-orange-500 pl-[9px]"
                         : "text-gray-300 border-l-[3px] border-transparent hover:bg-white/5 hover:text-white"
                     }
                   `}
