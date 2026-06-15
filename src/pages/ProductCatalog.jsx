@@ -1,5 +1,5 @@
 import { useState } from "react";
-import {Search,ChevronDown,Plus,Eye,Pencil,Trash2,X,Lock,ChevronLeft,ChevronRight,
+import {Search,ChevronDown,Plus,Eye,Pencil,Trash2,X,Lock,ChevronLeft,ChevronRight,Bell,
 } from "lucide-react";
 
 // ─── Dummy Data ───────────────────────────────────────────────────────────────
@@ -713,12 +713,32 @@ export default function ProductCatalog() {
                 Master catalog — vendors search this when adding listings
               </p>
             </div>
-            <button
-              onClick={() => setPanel({ type: "add" })}
-              className="bg-orange-500 hover:bg-orange-600 text-white font-bold text-[13px] px-5 py-2.5 rounded-lg flex items-center gap-1.5 transition"
-            >
-              <Plus size={15} /> Add Product
+
+            {/* ──  topbar right actions ── */}
+            <div className="flex items-center gap-2">
+              {/*  icon  notification (Bell) */}
+              <button className="w-9 h-9 rounded-[10px] flex items-center justify-center bg-none border border-[#EBEBEB] text-base cursor-pointer relative">
+              🔔
+              <span className="absolute top-1.5 right-1.5 w-[7px] h-[7px] bg-[#FF4500] rounded-full border-[1.5px] border-white" />
             </button>
+
+              {/* Add Product — pill shape with shadow */}
+              <button
+                onClick={() => setPanel({ type: "add" })}
+                className="flex items-center gap-1.5 text-white font-bold text-[13px] px-[18px] py-[9px] rounded-full hover:opacity-90 transition"
+                style={{ background: "#FF4500", boxShadow: "0 3px 10px rgba(255,69,0,0.22)" }}
+              >
+                <Plus size={14} /> Add Product
+              </button>
+
+              {/* ZA avatar — circle */}
+              <div
+                className="w-9 h-9 rounded-full flex items-center justify-center text-white text-[13px] font-bold cursor-pointer select-none flex-shrink-0"
+                style={{ background: "#FF4500" }}
+              >
+                ZA
+              </div>
+            </div>
           </div>
 
           {/* ── Filters ── */}

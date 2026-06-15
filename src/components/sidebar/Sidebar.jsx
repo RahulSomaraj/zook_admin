@@ -1,48 +1,46 @@
-import { useState } from "react";
+import { NavLink } from "react-router-dom";
 
 const navSections = [
   {
     label: "OVERVIEW",
     items: [
-      { id: "dashboard", icon: "📊", label: "Dashboard" },
-      { id: "analytics", icon: "📈", label: "Analytics" },
+      { id: "dashboard", icon: "📊", label: "Dashboard", path: "/dashboard" },
+      { id: "analytics", icon: "📈", label: "Analytics", path: "/analytics" },
     ],
   },
   {
     label: "VENDORS",
     items: [
-      { id: "all-vendors", icon: "👥", label: "All Vendors" },
-      { id: "kyc-review", icon: "🪪", label: "KYC Review", badge: 4, badgeColor: "bg-yellow-400 text-black" },
-      { id: "strike-management", icon: "⚠️", label: "Strike Management" },
+      { id: "all-vendors", icon: "👥", label: "All Vendors", path: "/all-vendors" },
+      { id: "kyc-review", icon: "🪪", label: "KYC Review", path: "/kyc-review", badge: 4, badgeColor: "bg-yellow-400 text-black" },
+      { id: "strike-management", icon: "⚠️", label: "Strike Management", path: "/strike-management" },
     ],
   },
   {
     label: "LISTINGS & C2C",
     items: [
-      { id: "all-listings", icon: "🏷️", label: "All Listings" },
-      { id: "c2c-drafts", icon: "✅", label: "C2C Drafts", badge: 3, badgeColor: "bg-orange-500 text-white" },
-      { id: "product-catalog", icon: "📦", label: "Product Catalog" },
+      { id: "all-listings", icon: "🏷️", label: "All Listings", path: "/all-listings" },
+      { id: "c2c-drafts", icon: "✅", label: "C2C Drafts", path: "/c2c-drafts", badge: 3, badgeColor: "bg-orange-500 text-white" },
+      { id: "product-catalog", icon: "📦", label: "Product Catalog", path: "/product-catalog" },
     ],
   },
   {
     label: "ORDERS",
     items: [
-      { id: "all-orders", icon: "🛒", label: "All Orders" },
-      { id: "fraud-review", icon: "🖼️", label: "Fraud Review", badge: 2, badgeColor: "bg-orange-500 text-white" },
+      { id: "all-orders", icon: "🛒", label: "All Orders", path: "/all-orders" },
+      { id: "fraud-review", icon: "🖼️", label: "Fraud Review", path: "/fraud-review", badge: 2, badgeColor: "bg-orange-500 text-white" },
     ],
   },
   {
     label: "ACCOUNT",
     items: [
-      { id: "notifications", icon: "🔔", label: "Notifications", badge: 7, badgeColor: "bg-orange-500 text-white" },
-      { id: "settings", icon: "⚙️", label: "Settings" },
+      { id: "notifications", icon: "🔔", label: "Notifications", path: "/notifications", badge: 7, badgeColor: "bg-orange-500 text-white" },
+      { id: "settings", icon: "⚙️", label: "Settings", path: "/settings" },
     ],
   },
 ];
 
 export default function Sidebar() {
-  const [active, setActive] = useState("product-catalog");
-
   return (
     <div className="w-64 min-h-screen bg-black flex flex-col select-none">
       {/* Logo */}
@@ -79,34 +77,31 @@ export default function Sidebar() {
             </p>
 
             {/* Items */}
-            {section.items.map((item) => {
-              const isActive = active === item.id;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => setActive(item.id)}
-                  className={`
-                    w-full flex items-center gap-3 px-3 py-2.5 rounded-md mb-0.5
-                    text-sm font-medium transition-all duration-150 relative
-                    ${
-                      isActive
-                        ? "bg-[#1e1f26] text-orange-600 border-l-[3px] border-orange-500 pl-[9px]"
-                        : "text-gray-300 border-l-[3px] border-transparent hover:bg-white/5 hover:text-white"
-                    }
-                  `}
-                >
-                  <span className="text-base leading-none">{item.icon}</span>
-                  <span className="flex-1 text-left">{item.label}</span>
-                  {item.badge && (
-                    <span
-                      className={`text-[11px] font-bold min-w-[20px] h-5 px-1.5 rounded-full flex items-center justify-center ${item.badgeColor}`}
-                    >
-                      {item.badge}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
+            {section.items.map((item) => (
+              <NavLink
+                key={item.id}
+                to={item.path}
+                className={({ isActive }) => `
+                  w-full flex items-center gap-3 px-3 py-2.5 rounded-md mb-0.5
+                  text-sm font-medium transition-all duration-150 relative
+                  ${
+                    isActive
+                      ? "bg-[#1e1f26] text-orange-600 border-l-[3px] border-orange-500 pl-[9px]"
+                      : "text-gray-300 border-l-[3px] border-transparent hover:bg-white/5 hover:text-white"
+                  }
+                `}
+              >
+                <span className="text-base leading-none">{item.icon}</span>
+                <span className="flex-1 text-left">{item.label}</span>
+                {item.badge && (
+                  <span
+                    className={`text-[11px] font-bold min-w-[20px] h-5 px-1.5 rounded-full flex items-center justify-center ${item.badgeColor}`}
+                  >
+                    {item.badge}
+                  </span>
+                )}
+              </NavLink>
+            ))}
           </div>
         ))}
       </nav>
