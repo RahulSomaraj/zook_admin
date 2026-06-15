@@ -1,10 +1,10 @@
 import MainLayout from "./layout/MainLayout";
-import ProductCatalog from "./pages/ProductCatalog";
+import AllOrders from "./pages/AllOrders";
 
 export default function App() {
   return (
     <MainLayout>
-      <ProductCatalog />
+      <AllOrders />
     </MainLayout>
   );
 }
