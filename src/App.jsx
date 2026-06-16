@@ -4,6 +4,7 @@ import MainLayout from "./layout/MainLayout";
 import ProductCatalog from "./pages/ProductCatalog";
 import FraudReview from "./pages/FraudReview";
 import AllOrders from "./pages/AllOrders";
+import C2CDrafts from "./pages/C2CDrafts";
 
 export default function App() {
   return (
@@ -13,6 +14,7 @@ export default function App() {
         <Route path="/product-catalog" element={<ProductCatalog />} />
         <Route path="/fraud-review" element={<FraudReview />} />
         <Route path="/all-orders" element={<AllOrders />} />
+        <Route path="/c2c-drafts" element={<C2CDrafts />} />
       </Routes>
     </MainLayout>
   );
