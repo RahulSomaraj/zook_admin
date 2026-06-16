@@ -5,6 +5,7 @@ import ProductCatalog from "./pages/ProductCatalog";
 import FraudReview from "./pages/FraudReview";
 import AllOrders from "./pages/AllOrders";
 import C2CDrafts from "./pages/C2CDrafts";
+import StrikeManagement from "./pages/StrikeManagement";
 
 export default function App() {
   return (
@@ -16,6 +17,7 @@ export default function App() {
         <Route path="/all-orders" element={<AllOrders />} />
         <Route path="/c2c-drafts" element={<C2CDrafts />} />
         <Route path="/kyc-review" element={<KycReview />} />
+        <Route path="/strike-management" element={<StrikeManagement />} />
       </Routes>
     </MainLayout>
   );
