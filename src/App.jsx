@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import MainLayout from "./layout/MainLayout";
-
+import KycReview from "./pages/KycReview";
 import ProductCatalog from "./pages/ProductCatalog";
 import FraudReview from "./pages/FraudReview";
 import AllOrders from "./pages/AllOrders";
@@ -15,6 +15,7 @@ export default function App() {
         <Route path="/fraud-review" element={<FraudReview />} />
         <Route path="/all-orders" element={<AllOrders />} />
         <Route path="/c2c-drafts" element={<C2CDrafts />} />
+        <Route path="/kyc-review" element={<KycReview />} />
       </Routes>
     </MainLayout>
   );
