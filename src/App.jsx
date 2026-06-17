@@ -6,6 +6,8 @@ import FraudReview from "./pages/FraudReview";
 import AllOrders from "./pages/AllOrders";
 import C2CDrafts from "./pages/C2CDrafts";
 import StrikeManagement from "./pages/StrikeManagement";
+import Overview from "./pages/Overview";
+<Route path="/dashboard" element={<Overview />} />
 
 export default function App() {
   return (
@@ -18,6 +20,8 @@ export default function App() {
         <Route path="/c2c-drafts" element={<C2CDrafts />} />
         <Route path="/kyc-review" element={<KycReview />} />
         <Route path="/strike-management" element={<StrikeManagement />} />
+        <Route path="/overview" element={<Overview />} />
+        <Route path="/dashboard" element={<Overview />} />
       </Routes>
     </MainLayout>
   );
