@@ -255,7 +255,7 @@ export default function FraudReview() {
           </div>
 
           {/* Fraud Cards */}
-          <div className="grid grid-cols-2 gap-4 mb-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
             {FRAUD_CASES.map((c) => (
               <FraudCard key={c.id} c={c} />
             ))}
@@ -267,7 +267,8 @@ export default function FraudReview() {
               <div className="text-[14px] font-extrabold text-[#0A0A0A]">Recent Fraud Actions</div>
               <span className="text-[12px] text-[#999]">Last 30 days</span>
             </div>
-            <table className="w-full border-collapse">
+            <div className="overflow-x-auto">
+            <table className="w-full min-w-[640px] border-collapse">
               <thead>
                 <tr>
                   {["Order", "Vendor", "Flag type", "Action taken", "Date"].map((h) => (
@@ -294,6 +295,7 @@ export default function FraudReview() {
                 ))}
               </tbody>
             </table>
+            </div>
           </div>
 
         </div>

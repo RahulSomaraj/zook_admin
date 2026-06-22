@@ -250,7 +250,7 @@ function EditProductPanel({ product, onClose, onSave }) {
   const set = (key, val) => setForm((f) => ({ ...f, [key]: val }));
 
   return (
-    <div className="w-[340px] min-w-[320px] max-w-[360px] flex-shrink-0 bg-white border-l border-slate-100 flex flex-col overflow-y-auto max-h-screen">
+    <div className="w-full lg:w-[340px] lg:min-w-[320px] lg:max-w-[360px] lg:flex-shrink-0 bg-white border-l border-slate-100 flex flex-col overflow-y-auto max-h-screen">
       <div className="px-5 pt-6 pb-4">
         {/* Header */}
         <div className="flex justify-between items-center mb-5">
@@ -431,7 +431,7 @@ function AddProductPanel({ onClose, onAdd }) {
   };
 
   return (
-    <div className="w-[340px] min-w-[320px] max-w-[360px] flex-shrink-0 bg-white border-l border-slate-100 flex flex-col overflow-y-auto max-h-screen">
+    <div className="w-full lg:w-[340px] lg:min-w-[320px] lg:max-w-[360px] lg:flex-shrink-0 bg-white border-l border-slate-100 flex flex-col overflow-y-auto max-h-screen">
       <div className="px-5 pt-6 pb-4">
         {/* Header */}
         <div className="flex justify-between items-center mb-5">
@@ -701,7 +701,7 @@ export default function ProductCatalog() {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden font-sans">
+    <div className="flex flex-col lg:flex-row min-h-screen lg:h-screen lg:overflow-hidden font-sans">
       {/* ── Main content ── */}
       <div className="flex-1 flex flex-col overflow-hidden bg-slate-50">
         {/* ── Top bar ── */}
@@ -794,7 +794,7 @@ export default function ProductCatalog() {
 
         {/* ── Table ── */}
         <div className="flex-1 overflow-auto px-8 pb-6">
-          <table className="w-full border-collapse">
+          <table className="w-full min-w-[640px] border-collapse">
             <thead>
               <tr className="border-b border-slate-100">
                 {[

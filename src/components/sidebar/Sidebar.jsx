@@ -40,17 +40,44 @@ const navSections = [
   },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ mobileOpen = false, onClose = () => {} }) {
   return (
-    <div className="w-64 min-h-screen bg-black flex flex-col select-none">
+    <>
+      {/* Backdrop — mobile only */}
+      <div
+        onClick={onClose}
+        aria-hidden="true"
+        className={`fixed inset-0 z-30 bg-black/50 md:hidden transition-opacity duration-200 ${
+          mobileOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
+      />
+
+      <div
+        className={`w-64 bg-black flex flex-col select-none
+          fixed inset-y-0 left-0 z-40 transform transition-transform duration-200
+          md:static md:z-auto md:min-h-screen md:translate-x-0 md:transition-none
+          ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}
+      >
       {/* Logo */}
-      <div className="px-5 pt-6 pb-5">
+      <div className="px-5 pt-6 pb-5 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="text-orange-600 font-black text-2xl tracking-widest">ZOOK</span>
           <span className="bg-orange-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full tracking-widest">
             ADMIN
           </span>
         </div>
+        {/* Close button — mobile only */}
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Close menu"
+          className="md:hidden p-1 text-gray-400 hover:text-white"
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
       </div>
 
       {/* Divider */}
@@ -81,6 +108,7 @@ export default function Sidebar() {
               <NavLink
                 key={item.id}
                 to={item.path}
+                onClick={onClose}
                 className={({ isActive }) => `
                   w-full flex items-center gap-3 px-3 py-2.5 rounded-md mb-0.5
                   text-sm font-medium transition-all duration-150 relative
@@ -114,6 +142,7 @@ export default function Sidebar() {
           <span>Log out</span>
         </button>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

@@ -101,10 +101,10 @@ export default function C2CDrafts() {
   const activeItem = draftItems.find(item => item.id === selectedItemId) || draftItems[0];
 
   return (
-    <div className="bg-slate-50 min-h-screen p-6 text-sm font-sans text-slate-800">
+    <div className="bg-slate-50 min-h-screen p-3 sm:p-6 text-sm font-sans text-slate-800">
       
       {/* Header Container */}
-      <div className="flex justify-between items-start mb-6">
+      <div className="flex flex-wrap gap-3 justify-between items-start mb-6">
         <div>
           <div className="flex items-center gap-4">
             <h1 className="text-xl font-bold text-slate-900 font-sans">C2C Drafts</h1>
@@ -122,10 +122,10 @@ export default function C2CDrafts() {
       </div>
 
       {/* Main Grid Matrix */}
-      <div className="grid grid-cols-12 gap-6 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         
         {/* LEFT PANEL: Inspector-Approved Items List */}
-        <div className="col-span-3 bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+        <div className="col-span-1 lg:col-span-3 bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
           <div className="p-4 border-b border-slate-100">
             <h3 className="font-bold text-slate-900 text-sm">Inspector-Approved Items</h3>
             <p className="text-xs text-slate-400 mt-0.5">Set final price & publish to make live</p>
@@ -166,7 +166,7 @@ export default function C2CDrafts() {
         </div>
 
         {/* MIDDLE PANEL: Main Inspection Details & Specs */}
-        <div className="col-span-6 space-y-6">
+        <div className="col-span-1 lg:col-span-6 space-y-6">
           
           {/* Item Identity Context */}
           <div>
@@ -261,7 +261,7 @@ export default function C2CDrafts() {
               <span className="text-xs text-slate-400">4 photos · Taken on-site by inspector</span>
             </div>
             
-            <div className="grid grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
               {[
                 { label: 'Front', bg: 'bg-orange-50' },
                 { label: 'Back', bg: 'bg-blue-50' },
@@ -290,7 +290,7 @@ export default function C2CDrafts() {
         </div>
 
         {/* RIGHT PANEL: Price Configuration & Financial Summary Panels */}
-        <div className="col-span-3 space-y-6">
+        <div className="col-span-1 lg:col-span-3 space-y-6">
           
           {/* Set Listing Price Widget */}
           <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-4">

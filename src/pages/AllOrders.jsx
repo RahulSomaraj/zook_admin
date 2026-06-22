@@ -159,10 +159,10 @@ export default function AllOrders() {
   ];
 
   return (
-    <div className="bg-slate-50 min-h-screen text-slate-800 text-xs font-sans p-6 space-y-6">
+    <div className="bg-slate-50 min-h-screen text-slate-800 text-xs font-sans p-3 sm:p-6 space-y-6">
       
       {/* HEADER SECTION */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-wrap gap-3 justify-between items-center">
         <h1 className="text-xl font-bold text-slate-900">All Orders</h1>
         <div className="flex items-center gap-4">
           {/* Export Action */}
@@ -183,7 +183,7 @@ export default function AllOrders() {
       </div>
 
       {/* SUMMARY STATS METRIC ROW */}
-      <div className="grid grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
         {summaryMetrics.map((metric, idx) => (
           <div key={idx} className="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm space-y-1">
             <span className="text-[10px] uppercase tracking-wider font-bold text-slate-400">{metric.label}</span>
@@ -194,7 +194,7 @@ export default function AllOrders() {
       </div>
 
       {/* FILTER CONTROL BAR */}
-      <div className="flex justify-between items-center bg-transparent pt-2">
+      <div className="flex flex-wrap gap-3 justify-between items-center bg-transparent pt-2">
         {/* Left Side Status Tabs */}
         <div className="flex gap-2">
           {tabs.map((tab) => {
@@ -258,7 +258,8 @@ export default function AllOrders() {
 
       {/* CORE DATA LEDGER TABLE */}
       <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
-        <table className="w-full text-left border-collapse">
+        <div className="overflow-x-auto">
+        <table className="w-full min-w-[640px] text-left border-collapse">
           <thead>
             <tr className="bg-slate-50/70 text-slate-400 text-[10px] uppercase font-bold border-b border-slate-100 tracking-wider">
               <th className="py-3 px-5 font-bold">Sub-Order</th>
@@ -353,6 +354,7 @@ export default function AllOrders() {
             ))}
           </tbody>
         </table>
+        </div>
       </div>
 
       {/* FOOTER PAGINATION SYSTEM */}

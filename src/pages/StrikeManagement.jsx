@@ -176,10 +176,10 @@ export default function StrikeManagement() {
   ];
 
   return (
-    <div className="flex-1 bg-slate-50 min-h-screen text-slate-800 text-xs font-sans p-6 space-y-6 overflow-y-auto">
+    <div className="flex-1 bg-slate-50 min-h-screen text-slate-800 text-xs font-sans p-3 sm:p-6 space-y-6 overflow-y-auto">
       
       {/* SCREEN TOP HEADER */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-wrap gap-3 justify-between items-center">
         <div>
           <div className="flex items-center gap-3">
             <h1 className="text-xl font-bold text-slate-900">Strike Management</h1>
@@ -198,7 +198,7 @@ export default function StrikeManagement() {
       </div>
 
       {/* STRATEGIC MILESTONE MATRIX CARD FEED */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm space-y-1">
           <span className="text-[10px] uppercase tracking-wider font-bold text-slate-400">Clean Vendors</span>
           <h2 className="text-2xl font-black text-slate-900">121</h2>
@@ -222,9 +222,9 @@ export default function StrikeManagement() {
       </div>
 
       {/* CONTROLSBAR & ALIGNMENT CRITERIA */}
-      <div className="flex justify-between items-center bg-transparent pt-1">
+      <div className="flex flex-wrap gap-3 justify-between items-center bg-transparent pt-1">
         {/* Navigation Pills */}
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           {['All vendors (128)', 'Strikes only (7)', 'Strike 1 (4)', 'Strike 2 (2)', 'Suspended (1)'].map((tab) => {
             const isActive = tab === activeTab;
             return (
@@ -244,7 +244,7 @@ export default function StrikeManagement() {
         </div>
 
         {/* Input Parameters */}
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <div className="relative">
             <span className="absolute left-3.5 top-2.5 text-slate-400">🔍</span>
             <input 
@@ -316,10 +316,10 @@ export default function StrikeManagement() {
             </div>
 
             {/* Split Screen Grid Layout splitting Timeline History vs Panel Controls */}
-            <div className="grid grid-cols-12 divide-x divide-slate-100 min-h-[160px]">
-              
+            <div className="grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-slate-100 min-h-[160px]">
+
               {/* Timeline Records Area (9 Col Wide) */}
-              <div className="col-span-9 p-5 space-y-4">
+              <div className="col-span-1 lg:col-span-9 p-5 space-y-4">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Strike History</span>
                 
                 {vendor.history.length === 0 ? (
@@ -350,7 +350,7 @@ export default function StrikeManagement() {
               </div>
 
               {/* Quick Admin Actions Box Section (3 Col Wide) */}
-              <div className="col-span-3 p-5 space-y-3 bg-slate-50/40">
+              <div className="col-span-1 lg:col-span-3 p-5 space-y-3 bg-slate-50/40">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Actions</span>
                 
                 <div className="space-y-2">

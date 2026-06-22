@@ -209,10 +209,10 @@ export default function KycReview() {
         </header>
 
         {/* ── Content ── */}
-        <div className="flex flex-1 overflow-hidden">
+        <div className="flex flex-col lg:flex-row flex-1 overflow-y-auto lg:overflow-hidden">
 
           {/* ── Queue Panel ── */}
-          <div className="w-[320px] min-w-[320px] border-r border-[#EBEBEB] bg-white flex flex-col overflow-hidden flex-shrink-0">
+          <div className="w-full lg:w-[320px] lg:min-w-[320px] max-h-[60vh] lg:max-h-none border-r border-[#EBEBEB] bg-white flex flex-col overflow-hidden lg:flex-shrink-0">
             {/* Queue Header */}
             <div className="px-[18px] py-4 border-b border-[#EBEBEB] flex-shrink-0">
               <div className="text-[14px] font-extrabold text-[#0A0A0A] mb-2.5">Pending Applications</div>
@@ -290,7 +290,7 @@ export default function KycReview() {
             </div>
 
             {/* Store + License Cards */}
-            <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
               {/* Store Info */}
               <div className="bg-white border border-[#EBEBEB] rounded-[14px] px-5 py-[18px]">
                 <div className="text-[12px] font-bold uppercase tracking-[0.07em] text-[#999] mb-3.5">Store Information</div>
@@ -313,7 +313,7 @@ export default function KycReview() {
                 <div className="text-[13px] font-extrabold text-[#0A0A0A]">📎 Uploaded Documents</div>
                 <span className="text-[12px] text-[#999]">Click any document to view full size</span>
               </div>
-              <div className="grid grid-cols-3 gap-3.5 p-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 p-4">
                 {vendor.documents.map((doc, i) => (
                   <div key={i} className="border border-[#EBEBEB] rounded-[10px] overflow-hidden cursor-pointer transition-all hover:border-[#FF4500] hover:shadow-[0_3px_12px_rgba(255,69,0,0.12)]">
                     <div className="h-[100px] flex items-center justify-center text-[36px] bg-[#F7F7F5]">

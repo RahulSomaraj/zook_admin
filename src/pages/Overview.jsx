@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function Overview() {
   return (
-    <div className="flex-1 bg-slate-50 min-h-screen text-slate-800 text-xs font-sans p-6 space-y-6 overflow-y-auto">
+    <div className="flex-1 bg-slate-50 min-h-screen text-slate-800 text-xs font-sans p-3 sm:p-6 space-y-6 overflow-y-auto">
       
       {/* TOP ACTIONS BAR / HEADER */}
       <div className="flex justify-between items-center">
@@ -27,7 +27,7 @@ export default function Overview() {
       </div>
 
       {/* ALERT ROW CARDS */}
-      <div className="grid grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
         {/* KYC Pending Application Card */}
         <div className="bg-amber-50/40 border border-amber-100 rounded-2xl p-5 shadow-sm flex justify-between items-start">
           <div className="space-y-1">
@@ -69,7 +69,7 @@ export default function Overview() {
       </div>
 
       {/* METRIC ROW BANNER CARDS */}
-      <div className="grid grid-cols-4 gap-5">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
         <div className="bg-white border border-slate-100 p-5 rounded-2xl shadow-sm flex items-center justify-between">
           <div className="space-y-1">
             <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">GMV Today</span>
@@ -108,10 +108,10 @@ export default function Overview() {
       </div>
 
       {/* PLATFORM REVENUE & LIVE ACTIVITY SPAN GROUP */}
-      <div className="grid grid-cols-12 gap-5 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
         
         {/* PLATFORM REVENUE COMPONENT */}
-        <div className="col-span-8 bg-white border border-slate-100 rounded-2xl p-5 shadow-sm flex flex-col justify-between h-[360px]">
+        <div className="col-span-1 lg:col-span-8 bg-white border border-slate-100 rounded-2xl p-5 shadow-sm flex flex-col justify-between h-[360px]">
           <div className="flex justify-between items-center">
             <h3 className="font-bold text-slate-900 text-sm">Platform Revenue</h3>
             <select className="border border-slate-200 bg-white text-slate-600 rounded-lg px-2.5 py-1 text-[11px] font-medium outline-none">
@@ -168,7 +168,7 @@ export default function Overview() {
         </div>
 
         {/* LIVE ACTIVITY COMPONENT */}
-        <div className="col-span-4 bg-white border border-slate-100 rounded-2xl shadow-sm h-[360px] flex flex-col overflow-hidden">
+        <div className="col-span-1 lg:col-span-4 bg-white border border-slate-100 rounded-2xl shadow-sm h-[360px] flex flex-col overflow-hidden">
           <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-white sticky top-0">
             <h3 className="font-bold text-slate-900 text-sm">Live Activity</h3>
             <button className="text-orange-600 font-bold text-[11px] hover:underline">View all</button>
@@ -220,10 +220,10 @@ export default function Overview() {
       </div>
 
       {/* LOWER ROW SPLIT GRID (KYC QUEUE, TOP VENDORS, SALES CATEGORIES) */}
-      <div className="grid grid-cols-12 gap-5 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
         
         {/* KYC QUEUE COMPONENT */}
-        <div className="col-span-5 bg-white border border-slate-100 rounded-2xl p-4 shadow-sm space-y-3">
+        <div className="col-span-1 lg:col-span-5 bg-white border border-slate-100 rounded-2xl p-4 shadow-sm space-y-3">
           <div className="flex justify-between items-center">
             <h3 className="font-bold text-slate-900 text-sm">KYC Queue</h3>
             <button className="text-orange-600 font-bold text-[11px]">View all →</button>
@@ -301,7 +301,7 @@ export default function Overview() {
         </div>
 
         {/* TOP VENDORS COMPONENT */}
-        <div className="col-span-3 bg-white border border-slate-100 rounded-2xl p-4 shadow-sm space-y-3">
+        <div className="col-span-1 lg:col-span-3 bg-white border border-slate-100 rounded-2xl p-4 shadow-sm space-y-3">
           <div className="flex justify-between items-center">
             <h3 className="font-bold text-slate-900 text-sm">Top Vendors</h3>
             <span className="text-orange-600 font-bold text-[11px]">This month</span>
@@ -336,7 +336,7 @@ export default function Overview() {
         </div>
 
         {/* SALES BY CATEGORY COMPONENT */}
-        <div className="col-span-4 bg-white border border-slate-100 rounded-2xl p-4 shadow-sm flex flex-col justify-between h-[285px]">
+        <div className="col-span-1 lg:col-span-4 bg-white border border-slate-100 rounded-2xl p-4 shadow-sm flex flex-col justify-between h-[285px]">
           <div>
             <div className="flex justify-between items-center mb-3">
               <h3 className="font-bold text-slate-900 text-sm">Sales by Category</h3>
