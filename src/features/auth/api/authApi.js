@@ -28,7 +28,7 @@ export async function loginRequest(credentials) {
       accessToken: "mock-access-token",
     };
   }
-  const { data } = await api.post("/auth/login", credentials);
+  const { data } = await api.post("/auth/admin/login", credentials);
   return data;
 }
 
