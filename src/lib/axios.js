@@ -2,19 +2,8 @@ import axios from "axios";
 import { env } from "../config/env";
 import { authStore } from "../features/auth/store/authStore";
 
-/**
- * Pre-configured axios instance used by every feature's api/ module.
- *
- * - withCredentials: true  → the httpOnly refresh-token cookie is sent on
- *   refresh calls without JS ever touching it.
- * - Request interceptor    → attaches the in-memory access token.
- * - Response interceptor   → on a 401, transparently refreshes the access
- *   token once and replays the original request. Concurrent 401s share a
- *   single refresh call via `refreshPromise`.
- */
 export const api = axios.create({
   baseURL: env.apiUrl,
-  withCredentials: true,
   headers: { "Content-Type": "application/json" },
 });
 
@@ -34,20 +23,26 @@ api.interceptors.response.use(
     const original = error.config;
     const status = error.response?.status;
 
-    if (status === 401 && original && !original._retry) {
+    const isAuthRequest = original?.url?.includes("/auth/admin/login");
+
+    if (status === 401 && original && !original._retry && !isAuthRequest) {
       original._retry = true;
       try {
-        // Coalesce parallel refreshes into one network call.
         refreshPromise = refreshPromise ?? requestNewAccessToken();
-        const newToken = await refreshPromise;
+        const { accessToken, refreshToken } = await refreshPromise;
         refreshPromise = null;
 
-        authStore.setToken(newToken);
-        original.headers.Authorization = `Bearer ${newToken}`;
+        localStorage.setItem("accessToken", accessToken);
+        localStorage.setItem("refreshToken", refreshToken);
+
+        authStore.setToken(accessToken);
+        original.headers.Authorization = `Bearer ${accessToken}`;
         return api(original);
       } catch (refreshError) {
         refreshPromise = null;
-        authStore.clear(); // refresh failed → force re-login
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        authStore.clear();
         return Promise.reject(refreshError);
       }
     }
@@ -56,16 +51,14 @@ api.interceptors.response.use(
   }
 );
 
-/**
- * Calls the refresh endpoint with a *bare* axios (not `api`) so it can never
- * recurse back through the response interceptor. The refresh token rides
- * along as an httpOnly cookie thanks to withCredentials.
- */
 async function requestNewAccessToken() {
+  const refreshToken = localStorage.getItem("refreshToken");
+  if (!refreshToken) return Promise.reject(new Error("No refresh token")); 
+
   const { data } = await axios.post(
     `${env.apiUrl}/auth/refresh`,
-    {},
-    { withCredentials: true }
+    { refreshToken }
   );
-  return data.accessToken;
+  const payload = data.data;
+  return { accessToken: payload.accessToken, refreshToken: payload.refreshToken };
 }

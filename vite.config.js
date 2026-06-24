@@ -7,4 +7,14 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://uatapi.zookapp.co',
+        changeOrigin: true,
+        secure: false,
+        
+      },
+    },
+  },
 })

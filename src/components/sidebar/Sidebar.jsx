@@ -1,4 +1,6 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";  
+import { useAuthStore } from "../../features/auth/store/authStore";
+import { logoutRequest } from "../../features/auth/api/authApi";
 
 const navSections = [
   {
@@ -41,6 +43,17 @@ const navSections = [
 ];
 
 export default function Sidebar({ mobileOpen = false, onClose = () => {} }) {
+  const clearAuth = useAuthStore((s) => s.clearAuth);
+const navigate = useNavigate();
+
+const handleLogout = async () => {
+  try {
+    await logoutRequest();
+  } finally {
+    clearAuth();
+    navigate("/login", { replace: true });
+  }
+};
   return (
     <>
       {/* Backdrop — mobile only */}
@@ -137,7 +150,9 @@ export default function Sidebar({ mobileOpen = false, onClose = () => {} }) {
       {/* Log out */}
       <div className="px-2 pb-5">
         <div className="mx-2 border-t border-white/10 mb-3" />
-        <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium text-gray-400 border-l-[3px] border-transparent hover:bg-white/5 hover:text-white transition-all duration-150">
+        <button 
+        onClick={handleLogout}
+        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium text-gray-400 border-l-[3px] border-transparent hover:bg-white/5 hover:text-white transition-all duration-150">
           <span className="text-base">🚪</span>
           <span>Log out</span>
         </button>

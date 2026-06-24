@@ -70,13 +70,15 @@ export default function LoginPage() {
             required
           />
 
-          {login.isError && (
-            <p className="text-red-400 text-xs mb-4">
-              {login.error?.response?.data?.message ||
-                login.error?.message ||
-                "Login failed"}
-            </p>
-          )}
+       {login.isError && (
+         <p className="text-red-400 text-xs mb-4">
+            {Array.isArray(login.error?.response?.data?.message)
+               ? login.error.response.data.message[0]
+               : login.error?.response?.data?.message
+               || login.error?.message
+               || "Login failed"}
+         </p>
+       )}
 
           <button
             type="submit"
