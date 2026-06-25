@@ -23,5 +23,9 @@ export const queryKeys = {
     list: (filters = {}) => ["kyc", "list", filters],
     detail: (id) => ["kyc", "detail", id],
   },
-  // Add new features here as you migrate them.
+  vendors: {
+    all: ["vendors"],
+    list: (filters = {}) => ["vendors", "list", filters],
+    detail: (id) => ["vendors", "detail", id],
+  },
 };

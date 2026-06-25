@@ -13,4 +13,5 @@ export const ROUTES = {
   c2cDrafts: "/c2c-drafts",
   kycReview: "/kyc-review",
   strikeManagement: "/strike-management",
+  allVendors: "/all-vendors",
 };

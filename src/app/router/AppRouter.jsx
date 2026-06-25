@@ -13,6 +13,7 @@ import AllOrders from "../../pages/AllOrders";
 import C2CDrafts from "../../pages/C2CDrafts";
 import KycReview from "../../pages/KycReview";
 import StrikeManagement from "../../pages/StrikeManagement";
+import VendorList from "../../features/vendors/components/VendorList";
 
 /**
  * Two route groups:
@@ -43,6 +44,7 @@ export default function AppRouter() {
         <Route path={ROUTES.c2cDrafts} element={<C2CDrafts />} />
         <Route path={ROUTES.kycReview} element={<KycReview />} />
         <Route path={ROUTES.strikeManagement} element={<StrikeManagement />} />
+        <Route path={ROUTES.allVendors} element={<VendorList />} />
       </Route>
 
       <Route path="*" element={<Navigate to={ROUTES.productCatalog} replace />} />
