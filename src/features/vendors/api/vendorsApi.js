@@ -6,7 +6,7 @@ export async function fetchVendors(filters = {}) {
     params: filters,
   });
 
-  return data;
+  return data.data;
 }
 
 export async function fetchVendorById(id) {
