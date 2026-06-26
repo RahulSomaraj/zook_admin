@@ -1,4 +1,7 @@
-import { useVendors } from "../hooks/useVendors";
+import {
+  useVendors,
+  useUpdateVendorStatus,
+} from "../hooks/useVendors";
 
 export default function VendorList() {
   const {
@@ -7,19 +10,43 @@ export default function VendorList() {
     isError,
   } = useVendors();
 
+  const {
+    mutate: updateStatus,
+  } = useUpdateVendorStatus();
+
+  const handleApprove = (id) => {
+  updateStatus({
+    id,
+    status: "approved",
+  });
+};
+
+  const handleReject = (id) => {
+    updateStatus({
+      id,
+      status: "suspended",
+    });
+  };
+
   if (isLoading) {
     return <div className="p-6">Loading vendors...</div>;
   }
 
   if (isError) {
-    return <div className="p-6 text-red-500">Failed to load vendors.</div>;
+    return (
+      <div className="p-6 text-red-500">
+        Failed to load vendors.
+      </div>
+    );
   }
 
   const vendors = data?.items || [];
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Vendor List</h1>
+      <h1 className="text-2xl font-bold mb-6">
+        Vendor List
+      </h1>
 
       <div className="overflow-x-auto">
         <table className="w-full border border-gray-200">
@@ -32,6 +59,7 @@ export default function VendorList() {
               <th className="p-3 text-left">Commission</th>
               <th className="p-3 text-left">Products</th>
               <th className="p-3 text-left">Status</th>
+              <th className="p-3 text-left">Actions</th>
             </tr>
           </thead>
 
@@ -67,6 +95,24 @@ export default function VendorList() {
 
                 <td className="p-3">
                   {vendor.status}
+                </td>
+
+                <td className="p-3">
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleApprove(vendor.id)}
+                      className="px-3 py-1 bg-green-600 text-white rounded"
+                    >
+                      Approve
+                    </button>
+
+                    <button
+                      onClick={() => handleReject(vendor.id)}
+                      className="px-3 py-1 bg-red-600 text-white rounded"
+                    >
+                      Reject
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}

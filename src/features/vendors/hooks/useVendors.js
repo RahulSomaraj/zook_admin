@@ -1,8 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+
 import {
   fetchVendors,
   fetchVendorById,
   updateVendorStatus,
+  fetchVendorKycList,
+  approveVendorKyc,
+  rejectVendorKyc,
 } from "../api/vendorsApi";
 
 import { queryKeys } from "../../../lib/queryKeys";
@@ -32,6 +36,42 @@ export function useUpdateVendorStatus() {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.vendors.all,
+      });
+    },
+  });
+}
+
+export function useVendorKycList() {
+  return useQuery({
+    queryKey: ["vendor-kyc"],
+    queryFn: fetchVendorKycList,
+  });
+}
+
+export function useApproveVendorKyc() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: approveVendorKyc,
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["vendor-kyc"],
+      });
+    },
+  });
+}
+
+export function useRejectVendorKyc() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, reason }) =>
+      rejectVendorKyc(id, reason),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["vendor-kyc"],
       });
     },
   });

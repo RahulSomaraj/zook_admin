@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Search } from "lucide-react";
+import { useVendorKycList } from "../features/vendors/hooks/useVendors";
 
 // ─── Dummy Data ───────────────────────────────────────────────────────────────
 
@@ -178,6 +179,10 @@ function DetailRow({ label, value }) {
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 export default function KycReview() {
+  const { data, isLoading, error } = useVendorKycList();
+
+  console.log("KYC DATA:", data);
+
   const [activeId, setActiveId] = useState(1);
   const [search, setSearch] = useState("");
   const [note, setNote] = useState("");
@@ -186,6 +191,7 @@ export default function KycReview() {
   const filtered = QUEUE.filter((q) =>
     q.name.toLowerCase().includes(search.toLowerCase())
   );
+  const kycItems = data?.items || [];
 
   const vendor = VENDOR_DETAILS[activeId];
 
@@ -196,7 +202,9 @@ export default function KycReview() {
         {/* ── Topbar ── */}
         <header className="h-[60px] bg-white border-b border-[#EBEBEB] flex items-center px-7 gap-3.5 flex-shrink-0">
           <div className="text-[18px] font-extrabold text-[#0A0A0A]">KYC Review</div>
-          <div className="text-[13px] text-[#999]">4 applications pending</div>
+          <div className="text-[13px] text-[#999]">
+          {kycItems.length} applications pending
+          </div>
           <div className="flex items-center gap-2 ml-auto">
             <button className="w-9 h-9 rounded-[10px] flex items-center justify-center bg-white border border-[#EBEBEB] text-base cursor-pointer relative hover:bg-[#F7F7F5] transition">
               🔔

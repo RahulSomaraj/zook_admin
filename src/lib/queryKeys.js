@@ -28,4 +28,8 @@ export const queryKeys = {
     list: (filters = {}) => ["vendors", "list", filters],
     detail: (id) => ["vendors", "detail", id],
   },
+  kyc: {
+    all: ["kyc"],
+    list: () => ["kyc", "list"],
+  },
 };
