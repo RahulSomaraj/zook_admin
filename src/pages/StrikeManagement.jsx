@@ -291,7 +291,7 @@ export default function StrikeManagement() {
                   {vendor.initials}
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-slate-900">{vendor.name}</h3>
+                  <h3 className="text-sm font-bold text-slate-900">{vendor?.vendor?.storeName}</h3>
                   <p className="text-xs text-slate-400 mt-0.5">
                     {vendor.category} · {vendor.joined} · {vendor.orders}
                   </p>

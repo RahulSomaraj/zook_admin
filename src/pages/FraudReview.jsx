@@ -144,7 +144,7 @@ function FraudCard({ c }) {
             {c.vendor.initials}
           </div>
           <div>
-            <div className="text-[13px] font-bold text-[#0A0A0A]">{c.vendor.name}</div>
+            <div className="text-[13px] font-bold text-[#0A0A0A]">{c.vendor?.vendor?.storeName}</div>
             <div className="text-[11px] text-[#999]">{c.vendor.meta}</div>
           </div>
         </div>

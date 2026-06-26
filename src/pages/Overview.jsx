@@ -321,7 +321,7 @@ export default function Overview() {
                   <div className={`w-6 h-6 rounded flex items-center justify-center text-white font-bold text-[10px] shrink-0 ${vendor.color}`}>
                     {vendor.id}
                   </div>
-                  <span className="font-bold text-slate-900 truncate">{vendor.name}</span>
+                  <span className="font-bold text-slate-900 truncate">{vendor?.vendor?.storeName}</span>
                 </div>
                 
                 <div className="flex items-center gap-2 shrink-0">

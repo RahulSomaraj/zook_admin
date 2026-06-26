@@ -1,147 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Search } from "lucide-react";
-import { useVendorKycList } from "../features/vendors/hooks/useVendors";
+import {
+  useVendorKycList,
+  useApproveVendorKyc,
+  useRejectVendorKyc,
+} from "../features/vendors/hooks/useVendors";
 
 // ─── Dummy Data ───────────────────────────────────────────────────────────────
-
-const QUEUE = [
-  {
-    id: 1,
-    initials: "AT",
-    avatarColor: "#7C3AED",
-    name: "Al Turath Electronics",
-    type: "Registered company · Electronics",
-    submittedLabel: "Submitted 2 min ago",
-    ageClass: "fresh",
-  },
-  {
-    id: 2,
-    initials: "SG",
-    avatarColor: "#3B82F6",
-    name: "Smart Gadgets LLC",
-    type: "Individual · Electronics",
-    submittedLabel: "Submitted 1 day ago",
-    ageClass: "warn",
-  },
-  {
-    id: 3,
-    initials: "TB",
-    avatarColor: "#22C55E",
-    name: "TechBay Dubai",
-    type: "Registered company · Gaming",
-    submittedLabel: "Submitted 2 days ago ⚠️",
-    ageClass: "old",
-  },
-  {
-    id: 4,
-    initials: "DF",
-    avatarColor: "#FF4500",
-    name: "Digital First Trading",
-    type: "Individual · Computers",
-    submittedLabel: "Submitted 2 days ago ⚠️",
-    ageClass: "old",
-  },
-];
-
-const VENDOR_DETAILS = {
-  1: {
-    name: "Al Turath Electronics",
-    subtitle: "Registered company · Electronics · Submitted 6 Jun 2026, 9:14 AM",
-    ded: "DED-20245823",
-    store: {
-      "Store name": "Al Turath Electronics",
-      "Business type": "Registered company",
-      Category: "Electronics",
-      "Pickup zone": "Deira, Dubai",
-      "Courier coverage": { value: "✓ Porter.ae available", ok: true },
-    },
-    license: {
-      "License number": { value: "DED-20245823", mono: true },
-      "Expiry date": { value: "31 Dec 2026", ok: true },
-      "Issuing authority": "Dubai DED",
-      Status: { value: "✓ Active", ok: true },
-      "Owner name": "Ahmed Hassan",
-    },
-    documents: [
-      { icon: "📄", name: "Trade License", file: "trade-license-2024.jpg · 2.8 MB" },
-      { icon: "🪪", name: "Emirates ID — Front", file: "eid-front.jpg · 1.4 MB" },
-      { icon: "🪪", name: "Emirates ID — Back", file: "eid-back.jpg · 1.2 MB" },
-    ],
-  },
-  2: {
-    name: "Smart Gadgets LLC",
-    subtitle: "Individual · Electronics · Submitted 5 Jun 2026, 3:42 PM",
-    ded: "DED-20241102",
-    store: {
-      "Store name": "Smart Gadgets LLC",
-      "Business type": "Individual",
-      Category: "Electronics",
-      "Pickup zone": "Sharjah",
-      "Courier coverage": { value: "✓ Porter.ae available", ok: true },
-    },
-    license: {
-      "License number": { value: "DED-20241102", mono: true },
-      "Expiry date": { value: "30 Jun 2026", ok: true },
-      "Issuing authority": "Sharjah DED",
-      Status: { value: "✓ Active", ok: true },
-      "Owner name": "Sara Al Mansouri",
-    },
-    documents: [
-      { icon: "📄", name: "Trade License", file: "trade-license.jpg · 3.1 MB" },
-      { icon: "🪪", name: "Emirates ID — Front", file: "eid-front.jpg · 1.6 MB" },
-      { icon: "🪪", name: "Emirates ID — Back", file: "eid-back.jpg · 1.3 MB" },
-    ],
-  },
-  3: {
-    name: "TechBay Dubai",
-    subtitle: "Registered company · Gaming · Submitted 4 Jun 2026, 11:20 AM",
-    ded: "DED-20239847",
-    store: {
-      "Store name": "TechBay Dubai",
-      "Business type": "Registered company",
-      Category: "Gaming",
-      "Pickup zone": "JLT, Dubai",
-      "Courier coverage": { value: "⚠️ Limited coverage", warn: true },
-    },
-    license: {
-      "License number": { value: "DED-20239847", mono: true },
-      "Expiry date": { value: "15 Aug 2026", ok: true },
-      "Issuing authority": "Dubai DED",
-      Status: { value: "✓ Active", ok: true },
-      "Owner name": "Khalid Al Rashidi",
-    },
-    documents: [
-      { icon: "📄", name: "Trade License", file: "trade-license.pdf · 4.2 MB" },
-      { icon: "🪪", name: "Emirates ID — Front", file: "eid-front.jpg · 1.1 MB" },
-      { icon: "🪪", name: "Emirates ID — Back", file: "eid-back.jpg · 0.9 MB" },
-    ],
-  },
-  4: {
-    name: "Digital First Trading",
-    subtitle: "Individual · Computers · Submitted 4 Jun 2026, 8:55 AM",
-    ded: "DED-20243301",
-    store: {
-      "Store name": "Digital First Trading",
-      "Business type": "Individual",
-      Category: "Computers",
-      "Pickup zone": "Abu Dhabi",
-      "Courier coverage": { value: "✓ Porter.ae available", ok: true },
-    },
-    license: {
-      "License number": { value: "DED-20243301", mono: true },
-      "Expiry date": { value: "31 Mar 2026", warn: true },
-      "Issuing authority": "Abu Dhabi DED",
-      Status: { value: "⚠️ Expiring soon", warn: true },
-      "Owner name": "Mohammed Al Farsi",
-    },
-    documents: [
-      { icon: "📄", name: "Trade License", file: "trade-license.jpg · 2.4 MB" },
-      { icon: "🪪", name: "Emirates ID — Front", file: "eid-front.jpg · 1.8 MB" },
-      { icon: "🪪", name: "Emirates ID — Back", file: "eid-back.jpg · 1.5 MB" },
-    ],
-  },
-};
-
 const REJECTION_REASONS = [
   "Trade license expired",
   "Document unclear / unreadable",
@@ -152,14 +17,9 @@ const REJECTION_REASONS = [
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-const ageColor = {
-  fresh: "text-[#22C55E]",
-  warn:  "text-[#F59E0B]",
-  old:   "text-[#EF4444]",
-};
 
 function DetailRow({ label, value }) {
-  const isObj = typeof value === "object";
+  const isObj = value !== null && typeof value === "object";
   const display = isObj ? value.value : value;
   const cls = isObj && value.ok
     ? "text-[#22C55E] font-bold"
@@ -181,19 +41,73 @@ function DetailRow({ label, value }) {
 export default function KycReview() {
   const { data, isLoading, error } = useVendorKycList();
 
-  console.log("KYC DATA:", data);
+  const { mutate: approveKyc } = useApproveVendorKyc();
+  const { mutate: rejectKyc } = useRejectVendorKyc();
 
-  const [activeId, setActiveId] = useState(1);
+  console.log("FIRST KYC ITEM:", data?.items?.[0]);
+  console.log("KYC DATA:", data);
+  console.log("KYC ITEMS:", data?.items);
+
+  const [activeId, setActiveId] = useState(null);
   const [search, setSearch] = useState("");
   const [note, setNote] = useState("");
   const [selectedReason, setSelectedReason] = useState(null);
 
-  const filtered = QUEUE.filter((q) =>
-    q.name.toLowerCase().includes(search.toLowerCase())
+  const handleApprove = () => {
+  approveKyc(activeId);
+  };
+
+  const handleReject = () => {
+    rejectKyc({
+      id: activeId,
+      reason: note || selectedReason || "Rejected by admin",
+    });
+  };
+  const handlePrevious = () => {
+  const currentIndex = filtered.findIndex(
+    (item) => item.id === activeId
   );
+
+  if (currentIndex > 0) {
+    setActiveId(filtered[currentIndex - 1].id);
+    setNote("");
+    setSelectedReason(null);
+    }
+  };
+
   const kycItems = data?.items || [];
 
-  const vendor = VENDOR_DETAILS[activeId];
+  const filtered = kycItems.filter((item) =>
+    (item.vendor?.storeName || "")
+      .toLowerCase()
+      .includes(search.toLowerCase())
+    );
+
+  useEffect(() => {
+    if (kycItems.length === 0) {
+      setActiveId(null);
+      return;
+    }
+
+    const exists = kycItems.some(item => item.id === activeId);
+
+    if (!exists) {
+      setActiveId(kycItems[0].id);
+    }
+  }, [kycItems, activeId]);
+
+  const vendor = kycItems.find((item) => item.id === activeId);
+  if (isLoading) {
+    return <div className="p-6">Loading...</div>;
+  }
+
+  if (error) {
+    return <div className="p-6">Something went wrong.</div>;
+  }
+
+  if (!vendor) {
+    return <div className="p-6">No pending KYC applications.</div>;
+  }
 
   return (
     <div className="flex flex-1 overflow-hidden bg-[#F7F7F5]">
@@ -251,14 +165,19 @@ export default function KycReview() {
                   >
                     <div
                       className="w-[38px] h-[38px] rounded-[6px] flex items-center justify-center text-[14px] font-extrabold text-white flex-shrink-0"
-                      style={{ backgroundColor: q.avatarColor }}
+                      style={{ backgroundColor: "#7C3AED" }}
                     >
-                      {q.initials}
+                      {(q.vendor?.storeName || "")
+                        .split(" ")
+                        .map(word => word[0])
+                        .join("")
+                        .slice(0, 2)}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="text-[13px] font-bold text-[#0A0A0A] truncate">{q.name}</div>
-                      <div className="text-[11px] text-[#999] mt-[1px]">{q.type}</div>
-                      <div className={`text-[11px] font-bold mt-1 ${ageColor[q.ageClass]}`}>{q.submittedLabel}</div>
+                      <div className="text-[13px] font-bold text-[#0A0A0A] truncate">{q.vendor?.storeName || "N/A"}</div>
+                      <div className="text-[11px] text-orange-500 font-bold mt-1">
+                        {q.status || "Pending"}
+                      </div>
                     </div>
                   </div>
                 );
@@ -272,17 +191,19 @@ export default function KycReview() {
             {/* Detail Header */}
             <div className="flex items-start justify-between mb-[22px]">
               <div>
-                <h2 className="text-[22px] font-extrabold text-[#0A0A0A] mb-1">{vendor.name}</h2>
-                <p className="text-[13px] text-[#666]">{vendor.subtitle}</p>
+                <h2 className="text-[22px] font-extrabold text-[#0A0A0A] mb-1">{vendor?.vendor?.storeName}</h2>
+                <p className="text-[13px] text-[#666]">{vendor.vendor?.user?.fullName || "N/A"}</p>
               </div>
               <div className="flex gap-2.5 flex-shrink-0">
-                <button className="inline-flex items-center gap-1.5 font-bold text-[13px] rounded-full border border-[#EBEBEB] bg-white text-[#333] px-5 py-2.5 hover:bg-[#F7F7F5] transition whitespace-nowrap">
-                  ← Previous
+                <button onClick={handlePrevious}
+                  className="inline-flex items-center gap-1.5 ..."> ← Previous
                 </button>
-                <button className="inline-flex items-center gap-1.5 font-bold text-[13px] rounded-full bg-[#EF4444] text-white px-5 py-2.5 hover:bg-[#DC2626] transition whitespace-nowrap">
+                <button onClick={handleReject}
+                  className="inline-flex items-center gap-1.5 font-bold text-[13px] rounded-full bg-[#EF4444] text-white px-5 py-2.5 hover:bg-[#DC2626] transition whitespace-nowrap">
                   ✕ Reject
                 </button>
-                <button className="inline-flex items-center gap-1.5 font-bold text-[13px] rounded-full bg-[#22C55E] text-white px-5 py-2.5 hover:bg-[#16A34A] transition shadow-[0_3px_10px_rgba(34,197,94,0.25)] whitespace-nowrap">
+                <button onClick={handleApprove}
+                  className="inline-flex items-center gap-1.5 font-bold text-[13px] rounded-full bg-[#22C55E] text-white px-5 py-2.5 hover:bg-[#16A34A] transition shadow-[0_3px_10px_rgba(34,197,94,0.25)] whitespace-nowrap">
                   ✓ Approve
                 </button>
               </div>
@@ -291,7 +212,10 @@ export default function KycReview() {
             {/* DED Verify Banner */}
             <div className="bg-[#EFF6FF] border border-[rgba(59,130,246,0.2)] rounded-[10px] px-4 py-3 flex items-center gap-3 text-[13px] text-[#1D4ED8] mb-4">
               <span>🔗</span>
-              <span>Verify trade license <strong>{vendor.ded}</strong> on the DED portal before approving</span>
+              <span>Verify trade license{" "}<strong>{vendor?.tradeLicenseNumber || "N/A"}</strong>{" "}
+                  on the DED portal before approving
+              </span>
+
               <button className="ml-auto bg-[#3B82F6] text-white border-none rounded-full px-3.5 py-1.5 text-[12px] font-bold cursor-pointer hover:bg-[#2563EB] transition whitespace-nowrap">
                 Open DED Portal →
               </button>
@@ -302,16 +226,22 @@ export default function KycReview() {
               {/* Store Info */}
               <div className="bg-white border border-[#EBEBEB] rounded-[14px] px-5 py-[18px]">
                 <div className="text-[12px] font-bold uppercase tracking-[0.07em] text-[#999] mb-3.5">Store Information</div>
-                {Object.entries(vendor.store).map(([k, v]) => (
-                  <DetailRow key={k} label={k} value={v} />
-                ))}
+                <DetailRow
+                  label="Store Name"
+                  value={vendor?.vendor?.storeName || "N/A"}/>
+                <DetailRow
+                    label="Owner"
+                    value={vendor?.vendor?.user?.fullName || "N/A"}/>
+                <DetailRow
+                    label="Status"
+                    value={vendor?.status || "Pending"}/>
               </div>
               {/* Trade License */}
               <div className="bg-white border border-[#EBEBEB] rounded-[14px] px-5 py-[18px]">
                 <div className="text-[12px] font-bold uppercase tracking-[0.07em] text-[#999] mb-3.5">Trade License</div>
-                {Object.entries(vendor.license).map(([k, v]) => (
-                  <DetailRow key={k} label={k} value={v} />
-                ))}
+                  <DetailRow
+                    label="Trade License"
+                    value={vendor?.tradeLicenseNumber || "N/A"}/>
               </div>
             </div>
 
@@ -322,18 +252,8 @@ export default function KycReview() {
                 <span className="text-[12px] text-[#999]">Click any document to view full size</span>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 p-4">
-                {vendor.documents.map((doc, i) => (
-                  <div key={i} className="border border-[#EBEBEB] rounded-[10px] overflow-hidden cursor-pointer transition-all hover:border-[#FF4500] hover:shadow-[0_3px_12px_rgba(255,69,0,0.12)]">
-                    <div className="h-[100px] flex items-center justify-center text-[36px] bg-[#F7F7F5]">
-                      {doc.icon}
-                    </div>
-                    <div className="px-3 py-2 bg-white">
-                      <div className="text-[11px] font-bold text-[#333]">{doc.name}</div>
-                      <div className="text-[10px] text-[#999] mt-[1px]">{doc.file}</div>
-                      <div className="text-[10px] text-[#FF4500] font-bold mt-[2px] cursor-pointer">🔍 View full size</div>
-                    </div>
-                  </div>
-                ))}
+                <div className="p-4 text-gray-500">No documents available.
+                </div>
               </div>
             </div>
 
@@ -368,10 +288,12 @@ export default function KycReview() {
               <button className="inline-flex items-center gap-1.5 font-bold text-[13px] rounded-full border border-[#EBEBEB] bg-white text-[#333] px-5 py-3 hover:bg-[#F7F7F5] transition whitespace-nowrap">
                 Skip — review later
               </button>
-              <button className="inline-flex items-center gap-1.5 font-bold text-[14px] rounded-full bg-[#EF4444] text-white px-7 py-3 hover:bg-[#DC2626] transition whitespace-nowrap">
+              <button onClick={handleReject}
+                className="inline-flex items-center gap-1.5 font-bold text-[14px] rounded-full bg-[#EF4444] text-white px-7 py-3 hover:bg-[#DC2626] transition whitespace-nowrap">
                 ✕ Reject with reason
               </button>
-              <button className="inline-flex items-center gap-1.5 font-bold text-[14px] rounded-full bg-[#22C55E] text-white px-7 py-3 hover:bg-[#16A34A] transition shadow-[0_3px_10px_rgba(34,197,94,0.25)] whitespace-nowrap">
+              <button onClick={handleApprove}
+                className="inline-flex items-center gap-1.5 font-bold text-[14px] rounded-full bg-[#22C55E] text-white px-7 py-3 hover:bg-[#16A34A] transition shadow-[0_3px_10px_rgba(34,197,94,0.25)] whitespace-nowrap">
                 ✓ Approve store
               </button>
             </div>
