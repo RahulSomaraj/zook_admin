@@ -118,22 +118,20 @@ export default function VendorList() {
       {/* --- INTEGRATED PROFILE HEADER ZONE --- */}
       <div className="flex justify-between items-center p-8 pb-4">
         <div>
-          <h1 className="text-[26px] font-bold text-slate-900 tracking-tight">Vendor List</h1>
-          <p className="text-[13px] text-slate-400 font-medium mt-0.5">{pendingVendors} vendors pending verification</p>
+          <h1 className="text-[20px] font-extrabold text-[#0A0A0A]">Vendor List</h1>
+          <p className="text-[13px] text-[#999]">{pendingVendors} vendors pending verification</p>
         </div>
         
         {/* Top Right Corner Profile Actions */}
         <div className="flex items-center gap-4">
           {/* Notification Bell Badge Wrapper */}
-          <div className="relative p-2.5 bg-amber-50 text-amber-600 rounded-full cursor-pointer hover:bg-amber-100/70 transition-colors">
-            <Bell size={20} className="fill-amber-500 stroke-amber-600" />
-            <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-[#E15A17] rounded-full border-2 border-white"></span>
-          </div>
-          
-          {/* Admin Avatar Circle */}
-          <div className="w-10 h-10 rounded-full bg-[#E15A17] text-white flex items-center justify-center font-bold text-sm tracking-wide shadow-sm cursor-pointer">
-            ZA
-          </div>
+           <button className="w-9 h-9 rounded-[10px] flex items-center justify-center bg-white border border-[#EBEBEB] text-base cursor-pointer relative hover:bg-[#F7F7F5] transition">
+                  🔔
+                  <span className="absolute top-[6px] right-[6px] w-[7px] h-[7px] bg-[#FF4500] rounded-full border-[1.5px] border-white" />
+            </button>
+             <div className="w-9 h-9 rounded-full bg-[#FF4500] flex items-center justify-center text-[13px] font-bold text-white cursor-pointer flex-shrink-0">
+                  ZA
+              </div>
         </div>
       </div>
 

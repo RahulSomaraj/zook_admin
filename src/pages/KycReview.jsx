@@ -106,8 +106,39 @@ export default function KycReview() {
   }
 
   if (!vendor) {
-    return <div className="p-6">No pending KYC applications.</div>;
-  }
+  return (
+    <div className="flex flex-1 overflow-hidden bg-[#F7F7F5]">
+      <div className="flex-1 flex flex-col overflow-hidden min-w-0">
+        <header className="h-[60px] bg-white border-b border-[#EBEBEB] flex items-center px-7 gap-3.5 flex-shrink-0">
+           <div className="text-[18px] font-extrabold text-[#0A0A0A]">KYC Review</div>
+           <div className="text-[13px] text-[#999]">0 applications pending</div>
+           <div className="flex items-center gap-2 ml-auto">
+               <button className="w-9 h-9 rounded-[10px] flex items-center justify-center bg-white border border-[#EBEBEB] text-base cursor-pointer relative hover:bg-[#F7F7F5] transition">
+                  🔔
+                  <span className="absolute top-[6px] right-[6px] w-[7px] h-[7px] bg-[#FF4500] rounded-full border-[1.5px] border-white" />
+               </button>
+                 <div className="w-9 h-9 rounded-full bg-[#FF4500] flex items-center justify-center text-[13px] font-bold text-white cursor-pointer flex-shrink-0">
+                  ZA
+                </div>
+          </div>
+</header>
+        <div className="flex-1 flex items-center justify-center h-full min-h-[calc(100vh-60px)]">
+          <div className="text-center">
+            <div className="w-[72px] h-[72px] rounded-full bg-[#F0FDF4] border-2 border-[#22C55E] flex items-center justify-center mx-auto mb-5">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#22C55E" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            </div>
+            <div className="text-[18px] font-extrabold text-[#0A0A0A] mb-2">All caught up!</div>
+            <div className="text-[13px] text-[#999] max-w-[240px] mx-auto leading-relaxed">
+              No pending KYC applications at the moment. New submissions will appear here.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
   return (
     <div className="flex flex-1 overflow-hidden bg-[#F7F7F5]">
