@@ -43,3 +43,11 @@ export async function rejectVendorKyc(id, reason) {
 
   return data;
 }
+
+export async function activateVendor(id) {
+  const { data } = await api.post(
+    `/admin/vendors/${id}/activate`
+  );
+
+  return data;
+}

@@ -4,6 +4,7 @@ import {
   useVendorKycList,
   useApproveVendorKyc,
   useRejectVendorKyc,
+  useActivateVendor,
 } from "../features/vendors/hooks/useVendors";
 
 // ─── Dummy Data ───────────────────────────────────────────────────────────────
@@ -43,6 +44,7 @@ export default function KycReview() {
 
   const { mutate: approveKyc } = useApproveVendorKyc();
   const { mutate: rejectKyc } = useRejectVendorKyc();
+  const { mutate: activateVendor } = useActivateVendor();
 
   console.log("FIRST KYC ITEM:", data?.items?.[0]);
   console.log("KYC DATA:", data);
@@ -55,6 +57,11 @@ export default function KycReview() {
 
   const handleApprove = () => {
   approveKyc(activeId);
+  };
+
+  const handleApproveStore = () => {
+    console.log("Vendor ID:", vendor.vendor.id);
+    activateVendor(vendor.vendor.id);
   };
 
   const handleReject = () => {
@@ -323,7 +330,7 @@ export default function KycReview() {
                 className="inline-flex items-center gap-1.5 font-bold text-[14px] rounded-full bg-[#EF4444] text-white px-7 py-3 hover:bg-[#DC2626] transition whitespace-nowrap">
                 ✕ Reject with reason
               </button>
-              <button onClick={handleApprove}
+              <button onClick={handleApproveStore}
                 className="inline-flex items-center gap-1.5 font-bold text-[14px] rounded-full bg-[#22C55E] text-white px-7 py-3 hover:bg-[#16A34A] transition shadow-[0_3px_10px_rgba(34,197,94,0.25)] whitespace-nowrap">
                 ✓ Approve store
               </button>

@@ -7,6 +7,7 @@ import {
   fetchVendorKycList,
   approveVendorKyc,
   rejectVendorKyc,
+  activateVendor,
 } from "../api/vendorsApi";
 
 import { queryKeys } from "../../../lib/queryKeys";
@@ -57,6 +58,24 @@ export function useApproveVendorKyc() {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["vendor-kyc"],
+      });
+    },
+  });
+}
+
+export function useActivateVendor() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: activateVendor,
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["vendor-kyc"],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.vendors.all,
       });
     },
   });
