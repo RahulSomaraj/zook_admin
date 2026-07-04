@@ -2,166 +2,11 @@ import {
   useCatalogProducts,
   useCategories,
   useBrands,
-  useCreateCatalogProduct,
 } from "../features/catalog/hooks/useCatalog";
 
 import { useState } from "react";
 import {Search,ChevronDown,Plus,Eye,Pencil,Trash2,X,Lock,ChevronLeft,ChevronRight,Bell,
 } from "lucide-react";
-
-// ─── Dummy Data ───────────────────────────────────────────────────────────────
-const PRODUCTS = [
-  {
-    id: 1,
-    brand: "Apple",
-    model: "iPhone 14 Pro",
-    category: "Smartphones",
-    year: 2022,
-    variants: ["128GB", "256GB", "512GB", "1TB"],
-    colours: ["Deep Purple", "Gold", "Silver", "Space Black"],
-    activeListings: 14,
-    status: "Active",
-    specs: ["A16 Bionic", '6.1" ProMotion', "48MP camera", "ProRes video"],
-    description:
-      "The iPhone 14 Pro features Apple's A16 Bionic chip, a 48MP main camera, and the new Dynamic Island notch design. Available in 128GB, 256GB, 512GB and 1TB storage options.",
-    image: null,
-  },
-  {
-    id: 2,
-    brand: "Apple",
-    model: "iPhone 13 Mini",
-    category: "Smartphones",
-    year: 2021,
-    variants: ["128GB", "256GB", "512GB"],
-    colours: ["Midnight", "Starlight", "Red"],
-    activeListings: 8,
-    status: "Active",
-    specs: ["A15 Bionic", '5.4" Super Retina', "Dual camera"],
-    description:
-      "The iPhone 13 Mini packs the powerful A15 Bionic chip into a compact 5.4-inch design, featuring dual cameras and all-day battery life.",
-    image: null,
-  },
-  {
-    id: 3,
-    brand: "Sony",
-    model: "PlayStation 5 Console",
-    category: "Gaming",
-    year: 2020,
-    variants: ["Standard", "Digital Edition", "Slim"],
-    colours: ["White", "Black"],
-    activeListings: 22,
-    status: "Active",
-    specs: ["AMD Zen 2", "10.28 TFLOPS GPU", "825GB SSD", "4K 120fps"],
-    description:
-      "The PlayStation 5 delivers next-gen gaming with ultra-high-speed SSD, ray tracing, 4K resolution, and the innovative DualSense controller.",
-    image: null,
-  },
-  {
-    id: 4,
-    brand: "Apple",
-    model: "MacBook Air M2",
-    category: "Laptops",
-    year: 2022,
-    variants: ["256GB", "512GB", "1TB"],
-    colours: ["Midnight", "Starlight", "Space Grey", "Silver"],
-    activeListings: 6,
-    status: "Active",
-    specs: ["Apple M2", "8-core CPU", "10-core GPU", "MagSafe charging"],
-    description:
-      "The MacBook Air with M2 chip features a redesigned fanless design, a 13.6-inch Liquid Retina display, and up to 18 hours of battery life.",
-    image: null,
-  },
-  {
-    id: 5,
-    brand: "Sony",
-    model: "Sony Alpha A7 IV",
-    category: "Cameras",
-    year: 2021,
-    variants: ["Body only", "Kit (28-70mm)"],
-    colours: ["Black"],
-    activeListings: 3,
-    status: "Active",
-    specs: ["33MP BSI sensor", "4K 60fps", "759-point AF", "5-axis IBIS"],
-    description:
-      "The Sony Alpha A7 IV is a full-frame mirrorless camera with a 33MP sensor, advanced autofocus, and professional video capabilities.",
-    image: null,
-  },
-  {
-    id: 6,
-    brand: "Sony",
-    model: "Sony WH-1000XM5",
-    category: "Audio",
-    year: 2022,
-    variants: ["Black", "White"],
-    colours: ["Black", "Platinum Silver"],
-    activeListings: 5,
-    status: "Active",
-    specs: ["30hr battery", "ANC", "LDAC", "Multipoint connect"],
-    description:
-      "Industry-leading noise cancellation with the WH-1000XM5, featuring 30-hour battery life, crystal-clear call quality, and premium audio.",
-    image: null,
-  },
-  {
-    id: 7,
-    brand: "Apple",
-    model: "Apple Watch Series 9",
-    category: "Wearables",
-    year: 2023,
-    variants: ["41mm", "45mm", "GPS", "Cellular"],
-    colours: ["Midnight", "Starlight", "Pink", "Red"],
-    activeListings: 9,
-    status: "Active",
-    specs: ["S9 SiP", "Double tap", "Brighter display", "Precision Finding"],
-    description:
-      "The Apple Watch Series 9 features the new S9 chip, double tap gesture, and a brighter always-on display with advanced health tracking.",
-    image: null,
-  },
-  {
-    id: 8,
-    brand: "Samsung",
-    model: "Samsung Galaxy S25",
-    category: "Smartphones",
-    year: 2025,
-    variants: ["128GB", "256GB"],
-    colours: ["Icy Blue", "Mint", "Navy", "Silver Shadow"],
-    activeListings: 0,
-    status: "Draft",
-    specs: ["Snapdragon 8 Elite", "50MP camera", "4K video", "AI features"],
-    description:
-      "The Samsung Galaxy S25 is powered by Snapdragon 8 Elite with Galaxy AI features, a refined design, and a pro-grade camera system.",
-    image: null,
-  },
-];
-
-const CATEGORIES = [
-  "All categories",
-  "Smartphones",
-  "Gaming",
-  "Laptops",
-  "Cameras",
-  "Audio",
-  "Wearables",
-];
-const BRANDS = ["All brands", "Apple", "Sony", "Samsung"];
-const STATUSES = ["All statuses", "Active", "Draft"];
-
-const CATEGORY_COLOURS = {
-  Smartphones: "#f97316",
-  Gaming: "#8b5cf6",
-  Laptops: "#3b82f6",
-  Cameras: "#10b981",
-  Audio: "#ec4899",
-  Wearables: "#f59e0b",
-};
-
-const CATEGORY_EMOJI = {
-  Smartphones: "📱",
-  Gaming: "🎮",
-  Laptops: "💻",
-  Cameras: "📷",
-  Audio: "🎧",
-  Wearables: "⌚",
-};
 
 // ─── Small reusable atoms ─────────────────────────────────────────────────────
 
@@ -285,22 +130,11 @@ function EditProductPanel({ product, onClose, onSave }) {
         <SectionLabel>BASIC DETAILS</SectionLabel>
 
         <FormField label="Brand *">
-          <div className="relative">
-            <select className={inputCls + " appearance-none pr-7 cursor-pointer"}
-              value={form.brand}
-              onChange={(e) => set("brand", e.target.value)}>
-            <option value="">Select...</option>
-              {brands.map((brand) => (
-            <option key={brand.id} value={brand.id}>
-              {brand.name}
-            </option>
-            ))}
-          </select>
-
-          <ChevronDown
-            size={12}
-            className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"/>
-          </div>
+          <input
+            className={inputCls}
+            value={form.brand}
+            onChange={(e) => set("brand", e.target.value)}
+          />
         </FormField>
 
         <FormField label="Model name *">
@@ -327,10 +161,7 @@ function EditProductPanel({ product, onClose, onSave }) {
                 value={form.category}
                 onChange={(e) => set("category", e.target.value)}
               >
-                {categories.map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {category.name}
-                  </option>
+                {categories.map((c) => (<option key={c}>{c}</option>
                 ))}
               </select>
               <ChevronDown
@@ -389,8 +220,8 @@ function EditProductPanel({ product, onClose, onSave }) {
               value={form.status}
               onChange={(e) => set("status", e.target.value)}
             >
-              <option value="active"> Active — visible to vendors when listing</option>
-              <option value="draft">Draft</option>
+              <option value="Active">Active — visible to vendors when listing</option>
+              <option value="Draft">Draft</option>
             </select>
             <ChevronDown
               size={12}
@@ -428,8 +259,7 @@ function EditProductPanel({ product, onClose, onSave }) {
 
 // ─── Add Product Panel ────────────────────────────────────────────────────────
 
-function AddProductPanel({onClose,categories,brands,}) {
-  const { mutate: createProduct, isPending } = useCreateCatalogProduct();
+function AddProductPanel({ onClose, onAdd }) {
   const [form, setForm] = useState({
     brand: "",
     model: "",
@@ -439,7 +269,7 @@ function AddProductPanel({onClose,categories,brands,}) {
     colours: [],
     specs: [],
     description: "",
-    status: "active",
+    status: "Active",
   });
   const set = (key, val) => setForm((f) => ({ ...f, [key]: val }));
 
@@ -449,30 +279,6 @@ function AddProductPanel({onClose,categories,brands,}) {
       e.target.value = "";
       e.preventDefault();
     }
-  };
-
-  const handleCreate = (status) => {
-    createProduct(
-      {
-        brandId: form.brand,
-        categoryId: form.category,
-        model: form.model,
-        year: Number(form.year),
-        stockImageUrl: "",
-        specs: {
-          storage: form.variants,
-          colors: form.colours,
-          keySpecs: form.specs,
-        },
-        description: form.description,
-        status,
-      },
-      {
-        onSuccess: () => {
-        onClose();
-        },
-      }
-    );
   };
 
   return (
@@ -485,7 +291,8 @@ function AddProductPanel({onClose,categories,brands,}) {
           </h3>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-600 p-1 rounded-md hover:bg-slate-100 transition">
+            className="text-slate-400 hover:text-slate-600 p-1 rounded-md hover:bg-slate-100 transition"
+          >
             <X size={16} />
           </button>
         </div>
@@ -504,22 +311,12 @@ function AddProductPanel({onClose,categories,brands,}) {
         <SectionLabel>BASIC DETAILS</SectionLabel>
 
         <FormField label="Brand *">
-          <div className="relative">
-            <select className={inputCls + " appearance-none pr-7 cursor-pointer"} value={form.brand}
-              onChange={(e) => set("brand", e.target.value)}>
-              <option value="">Select...</option>
-                {brands.map((brand) => (
-              <option
-                key={brand.id}
-                value={brand.id}>
-                {brand.name}
-              </option>
-              ))}
-            </select>
-
-          <ChevronDown size={12}
-            className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"/>
-          </div>
+          <input
+            className={inputCls}
+            placeholder="e.g. Apple, Samsung, Sony…"
+            value={form.brand}
+            onChange={(e) => set("brand", e.target.value)}
+          />
         </FormField>
 
         <FormField label="Model name *">
@@ -549,10 +346,7 @@ function AddProductPanel({onClose,categories,brands,}) {
                 onChange={(e) => set("category", e.target.value)}
               >
                 <option value="">Select…</option>
-                {categories.map((category) => (
-                  <option key={category.id}value={category.id}>
-                    {category.name}
-                  </option>
+                {categories.map((c) => (<option key={c}>{c}</option>
                 ))}
               </select>
               <ChevronDown
@@ -661,8 +455,8 @@ function AddProductPanel({onClose,categories,brands,}) {
               value={form.status}
               onChange={(e) => set("status", e.target.value)}
             >
-              <option value="active">Active — visible to vendors when listing</option>
-              <option value="draft">Draft</option>
+              <option value="Active">Active — visible to vendors when listing</option>
+              <option value="Draft">Draft</option>
             </select>
             <ChevronDown
               size={12}
@@ -687,13 +481,19 @@ function AddProductPanel({onClose,categories,brands,}) {
             Discard
           </button>
           <div className="flex gap-2">
-            <button onClick={() => handleCreate("draft")}
-              disabled={isPending}>Save as draft
+            <button
+              onClick={() =>
+                onAdd({ ...form, status: "Draft", id: Date.now(), activeListings: 0 })
+              }
+              className="border border-slate-200 text-gray-700 font-semibold text-[13px] px-4 py-2 rounded-lg hover:bg-slate-50 transition"
+            >
+              Save as draft
             </button>
-
-            <button onClick={() => handleCreate("active")}
-              disabled={isPending}>
-                {isPending ? "Saving..." : "✓ Add to catalog"}
+            <button
+              onClick={() => onAdd({ ...form, id: Date.now(), activeListings: 0 })}
+              className="bg-orange-500 hover:bg-orange-600 text-white font-bold text-[13px] px-4 py-2 rounded-lg flex items-center gap-1.5 transition"
+            >
+              ✓ Add to catalog
             </button>
           </div>
         </div>
@@ -704,54 +504,53 @@ function AddProductPanel({onClose,categories,brands,}) {
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
-export default function ProductCatalog() {
+export default function Categories() {
+const [page, setPage] = useState(1);
+const { data: catalogData, isLoading, error } = useCatalogProducts({
+  page,
+  limit: 20,
+});
 
-  const [search, setSearch] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState("All categories");
-  const [brandFilter, setBrandFilter] = useState("All brands");
-  const [statusFilter, setStatusFilter] = useState("All statuses");
-  const [panel, setPanel] = useState(null);
-  const [page, setPage] = useState(1);
+const [search, setSearch] = useState("");
+const [categoryFilter, setCategoryFilter] = useState("All categories");
+const [brandFilter, setBrandFilter] = useState("All brands");
+const [statusFilter, setStatusFilter] = useState("All statuses");
+const [panel, setPanel] = useState(null); // null | { type:'edit', product } | { type:'add' }
 
-  const { data: categoriesData } = useCategories();
+if (isLoading) {
+    return <div>Loading...</div>;
+}
+
+if (error) {
+  return <div>Failed to load categories.</div>;
+}
+
   const { data: brandsData } = useBrands();
 
-  const { data: catalogData, isLoading } = useCatalogProducts({
-    page,
-    limit: 8,
-    search,
-    categoryId:
-      categoryFilter === "All categories" ? undefined : categoryFilter,
-    brandId:
-      brandFilter === "All brands" ? undefined : brandFilter,
-    status:
-      statusFilter === "All statuses" ? undefined : statusFilter,
-  });
-
-  const products = catalogData?.data?.items || [];
-
-  console.log("Categories:", categoriesData);
+  console.log("Categories:", catalogData);
   console.log("Brands:", brandsData);
 
-  const categories = categoriesData?.data?.items?.map((c) => c.name) || [];
-  const brands = brandsData?.data?.items?.map((b) => b.name) || [];
+  const categories =
+  catalogData?.data?.items?.map((c) => c.name) || [];
 
-  const filtered = products;
-  const totalPages = catalogData?.data?.meta?.totalPages || 1;
+  const brands =
+  brandsData?.data?.items?.map((b) => b.name) || [];
+
+  const filtered = catalogData?.data?.items || [];
+  const totalPages = catalogData?.data?.totalPages || 1;
   const paged = filtered;
 
-  const handleDelete = (id) => {
-    console.log("Delete", id);
-  };
-
-  const handleSaveEdit = (updatedProduct) => {
-    console.log(updatedProduct);
+  const handleSaveEdit = () => {
     setPanel(null);
   };
 
-  if (isLoading) {
-    return <div className="p-8">Loading...</div>;
-  }
+  const handleAdd = () => {
+    setPanel(null);
+  };
+
+  const handleDelete = (id) => {
+   console.log(id);
+  };
 
   return (
     <div className="flex flex-col lg:flex-row min-h-screen lg:h-screen lg:overflow-hidden font-sans">
@@ -883,29 +682,29 @@ export default function ProductCatalog() {
                     <td className="py-3.5 pr-4 min-w-[200px]">
                       <div className="flex items-center gap-2.5">
                         <div className="w-9 h-9 bg-slate-100 rounded-lg flex items-center justify-center text-lg flex-shrink-0">
-                          {CATEGORY_EMOJI[p.category?.name] || "📦"}
+                          {CATEGORY_EMOJI[p.category] || "📦"}
                         </div>
                         <div>
                           <p className="m-0 font-semibold text-[14px] text-slate-900">
                             {p.model}
                           </p>
-                          <p className="m-0 text-xs text-slate-400">{p.brand?.name}</p>
+                          <p className="m-0 text-xs text-slate-400">{p.brand}</p>
                         </div>
                       </div>
                     </td>
 
                     <td className="py-3.5 pr-4">
-                      <CategoryBadge category={p.category?.name} />
+                      <CategoryBadge category={p.category} />
                     </td>
 
                     <td className="py-3.5 pr-4 text-[13px] text-gray-600">{p.year}</td>
 
                     <td className="py-3.5 pr-4 text-xs text-slate-500 max-w-[180px]">
-                      {p.specs?.storage?.join(" / ") || "-"}
+                      {p.variants?.join(" / ") || "-"}
                     </td>
 
                     <td className="py-3.5 pr-4 text-[13px] text-slate-900 font-medium">
-                      {p._count?.products ?? 0}
+                      {p.activeListings}
                     </td>
 
                     <td className="py-3.5 pr-4">
@@ -1006,9 +805,7 @@ export default function ProductCatalog() {
         />
       )}
       {panel?.type === "add" && (
-        <AddProductPanel onClose={() => setPanel(null)}
-          categories={categoriesData?.data?.items || []}
-          brands={brandsData?.data?.items || []}/>
+        <AddProductPanel onClose={() => setPanel(null)} onAdd={handleAdd} />
       )}
     </div>
   );
