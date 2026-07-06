@@ -1,12 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 import {
-  getCatalogProducts,
-  createCatalogProduct,
-  updateCatalogProduct,
-  deleteCatalogProduct,
-  restoreCatalogProduct,
-  getCatalogProduct,
   getCategories,
   getBrands,
   createCategory,
@@ -17,12 +11,42 @@ import {
   updateBrand,
   deleteBrand,
   restoreBrand,
+  getCatalogProducts,
+  getCatalogProduct,
+  createCatalogProduct,
+  updateCatalogProduct,
 } from "../api/catalogApi";
+
+export const useUpdateCatalogProduct = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: updateCatalogProduct,
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["catalog-products"],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: ["catalog-product"],
+      });
+    },
+  });
+};
 
 export const useCatalogProducts = (params = {}) => {
   return useQuery({
     queryKey: ["catalog-products", params],
     queryFn: () => getCatalogProducts(params),
+  });
+};
+
+export const useCatalogProduct = (id) => {
+  return useQuery({
+    queryKey: ["catalog-product", id],
+    queryFn: () => getCatalogProduct(id),
+    enabled: !!id,
   });
 };
 
@@ -159,48 +183,6 @@ export function useCreateCatalogProduct() {
 
   return useMutation({
     mutationFn: createCatalogProduct,
-
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["catalog-products"],
-      });
-    },
-  });
-}
-
-export function useUpdateCatalogProduct() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: updateCatalogProduct,
-
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["catalog-products"],
-      });
-    },
-  });
-}
-
-export function useDeleteCatalogProduct() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: deleteCatalogProduct,
-
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["catalog-products"],
-      });
-    },
-  });
-}
-
-export function useRestoreCatalogProduct() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: restoreCatalogProduct,
 
     onSuccess: () => {
       queryClient.invalidateQueries({

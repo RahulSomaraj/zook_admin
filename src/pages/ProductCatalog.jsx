@@ -1,11 +1,13 @@
 import {
   useCatalogProducts,
+  useCatalogProduct,
   useCategories,
   useBrands,
   useCreateCatalogProduct,
+  useUpdateCatalogProduct,
 } from "../features/catalog/hooks/useCatalog";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {Search,ChevronDown,Plus,Eye,Pencil,Trash2,X,Lock,ChevronLeft,ChevronRight,Bell,
 } from "lucide-react";
 
@@ -252,8 +254,35 @@ function TagInput({ label, values, onChange }) {
 
 // ─── Edit Product Panel ───────────────────────────────────────────────────────
 
-function EditProductPanel({ product, onClose, onSave }) {
-  const [form, setForm] = useState({ ...product });
+function EditProductPanel({product,onClose,onSave,brands,categories,}) {
+  const [form, setForm] = useState({
+    brand: product.brandId,
+    model: product.model,
+    year: product.year,
+    category: product.categoryId,
+    variants: product.specs?.storage || [],
+    colours: product.specs?.colors || [],
+    specs: product.specs?.keySpecs || [],
+    description: product.description || "",
+    status: product.status,
+    activeListings: product._count?.products || 0,
+  });
+
+  useEffect(() => {
+    setForm({
+      brand: product.brandId,
+      model: product.model,
+      year: product.year,
+      category: product.categoryId,
+      variants: product.specs?.storage || [],
+      colours: product.specs?.colors || [],
+      specs: product.specs?.keySpecs || [],
+      description: product.description || "",
+      status: product.status,
+      activeListings: product._count?.products || 0,
+    });
+  }, [product]);
+
   const set = (key, val) => setForm((f) => ({ ...f, [key]: val }));
 
   return (
@@ -452,21 +481,37 @@ function AddProductPanel({onClose,categories,brands,}) {
   };
 
   const handleCreate = (status) => {
-    createProduct(
-      {
-        brandId: form.brand,
-        categoryId: form.category,
-        model: form.model,
-        year: Number(form.year),
-        stockImageUrl: "",
-        specs: {
-          storage: form.variants,
-          colors: form.colours,
-          keySpecs: form.specs,
-        },
-        description: form.description,
-        status,
+    console.log({
+      brandId: form.brand,
+      categoryId: form.category,
+      model: form.model,
+      year: Number(form.year),
+      stockImageUrl: "https://via.placeholder.com/600x600.png",
+      specs: {
+        storage: form.variants,
+        colors: form.colours,
+        keySpecs: form.specs,
       },
+      description: form.description,
+      status,
+    });
+
+
+    createProduct(
+    {
+      brandId: form.brand,
+      categoryId: form.category,
+      model: form.model,
+      year: Number(form.year),
+      stockImageUrl: "https://via.placeholder.com/600x600.png",
+      specs: {
+        storage: form.variants,
+        colors: form.colours,
+        keySpecs: form.specs,
+      },
+      description: form.description,
+      status,
+    },
       {
         onSuccess: () => {
         onClose();
@@ -712,9 +757,12 @@ export default function ProductCatalog() {
   const [statusFilter, setStatusFilter] = useState("All statuses");
   const [panel, setPanel] = useState(null);
   const [page, setPage] = useState(1);
+  const [selectedProductId, setSelectedProductId] = useState(null);
 
+  const { mutate: updateProduct } = useUpdateCatalogProduct();
   const { data: categoriesData } = useCategories();
   const { data: brandsData } = useBrands();
+  const { data: productData } = useCatalogProduct(selectedProductId);
 
   const { data: catalogData, isLoading } = useCatalogProducts({
     page,
@@ -732,6 +780,19 @@ export default function ProductCatalog() {
 
   console.log("Categories:", categoriesData);
   console.log("Brands:", brandsData);
+  console.log("Selected Product:", productData);
+  useEffect(() => {
+    if (
+      productData?.data &&
+      selectedProductId &&
+      panel?.type !== "edit"
+    ) {
+      setPanel({
+        type: "edit",
+        product: productData.data,
+      });
+    }
+  }, [productData, selectedProductId]);
 
   const categories = categoriesData?.data?.items?.map((c) => c.name) || [];
   const brands = brandsData?.data?.items?.map((b) => b.name) || [];
@@ -745,8 +806,31 @@ export default function ProductCatalog() {
   };
 
   const handleSaveEdit = (updatedProduct) => {
-    console.log(updatedProduct);
-    setPanel(null);
+    updateProduct(
+      {
+        id: panel.product.id,
+        payload: {
+          brandId: updatedProduct.brand,
+          model: updatedProduct.model,
+          year: Number(updatedProduct.year),
+          categoryId: updatedProduct.category,
+          stockImageUrl: panel.product.stockImageUrl,
+          specs: {
+            storage: updatedProduct.variants,
+            colors: updatedProduct.colours,
+            keySpecs: updatedProduct.specs,
+          },
+          description: updatedProduct.description,
+          status: updatedProduct.status,
+        },
+      },
+      {
+        onSuccess: () => {
+          setPanel(null);
+          setSelectedProductId(null);
+        },
+      }
+    );
   };
 
   if (isLoading) {
@@ -916,21 +1000,16 @@ export default function ProductCatalog() {
                     <td className="py-3.5 whitespace-nowrap">
                       <div className="flex items-center gap-0.5">
                         {/* Eye */}
-                        <button
-                          title="View"
-                          onClick={() => alert(`Viewing: ${p.model}`)}
-                          className="p-1.5 rounded-md text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition"
-                        >
+                        <button title="View" onClick={() => setSelectedProductId(p.id)}
+                          className="p-1.5 rounded-md text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition">
                           <Eye size={15} />
                         </button>
                         {/* Edit */}
                         <button
                           title="Edit"
-                          onClick={() =>
-                            setPanel(
-                              isSelected ? null : { type: "edit", product: p }
-                            )
-                          }
+                          onClick={() => {
+                            setSelectedProductId(p.id);
+                          }}
                           className={`p-1.5 rounded-md transition hover:bg-slate-100 ${
                             isSelected
                               ? "text-orange-500"
@@ -1001,8 +1080,13 @@ export default function ProductCatalog() {
       {panel?.type === "edit" && (
         <EditProductPanel
           product={panel.product}
-          onClose={() => setPanel(null)}
-          onSave={handleSaveEdit}
+          onClose={() => {
+          setPanel(null);
+          setSelectedProductId(null);
+        }}  
+        onSave={handleSaveEdit}
+        brands={brandsData?.data?.items || []}
+        categories={categoriesData?.data?.items || []}
         />
       )}
       {panel?.type === "add" && (
