@@ -5,6 +5,8 @@ import {
   useBrands,
   useCreateCatalogProduct,
   useUpdateCatalogProduct,
+  useDeleteCatalogProduct,
+  useRestoreCatalogProduct,
 } from "../features/catalog/hooks/useCatalog";
 
 import { useState, useEffect } from "react";
@@ -755,6 +757,8 @@ export default function ProductCatalog() {
   const [categoryFilter, setCategoryFilter] = useState("All categories");
   const [brandFilter, setBrandFilter] = useState("All brands");
   const [statusFilter, setStatusFilter] = useState("All statuses");
+  const [showArchived, setShowArchived] = useState(false);
+
   const [panel, setPanel] = useState(null);
   const [page, setPage] = useState(1);
   const [selectedProductId, setSelectedProductId] = useState(null);
@@ -763,6 +767,8 @@ export default function ProductCatalog() {
   const { data: categoriesData } = useCategories();
   const { data: brandsData } = useBrands();
   const { data: productData } = useCatalogProduct(selectedProductId);
+  const deleteProduct = useDeleteCatalogProduct();
+  const restoreProduct = useRestoreCatalogProduct();
 
   const { data: catalogData, isLoading } = useCatalogProducts({
     page,
@@ -774,9 +780,13 @@ export default function ProductCatalog() {
       brandFilter === "All brands" ? undefined : brandFilter,
     status:
       statusFilter === "All statuses" ? undefined : statusFilter,
+    includeDeleted: showArchived,
   });
 
   const products = catalogData?.data?.items || [];
+  const filtered = products.filter((product) =>
+    showArchived ? product.deletedAt : !product.deletedAt
+  );
 
   console.log("Categories:", categoriesData);
   console.log("Brands:", brandsData);
@@ -797,12 +807,38 @@ export default function ProductCatalog() {
   const categories = categoriesData?.data?.items?.map((c) => c.name) || [];
   const brands = brandsData?.data?.items?.map((b) => b.name) || [];
 
-  const filtered = products;
   const totalPages = catalogData?.data?.meta?.totalPages || 1;
   const paged = filtered;
 
-  const handleDelete = (id) => {
-    console.log("Delete", id);
+  const handleDelete = async (id) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this product?"
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+      await deleteProduct.mutateAsync(id);
+      alert("Product deleted successfully");
+    } catch (error) {
+        console.error(error);
+        alert(
+        error.response?.data?.message || "Failed to delete product"
+        );
+      }
+  };
+
+  const handleRestore = (id) => {
+    if (!window.confirm("Restore this product?")) return;
+
+    restoreProduct.mutate(id, {
+      onSuccess: () => {
+        alert("Product restored successfully.");
+      },
+      onError: () => {
+        alert("Failed to restore product.");
+      },
+    });
   };
 
   const handleSaveEdit = (updatedProduct) => {
@@ -860,19 +896,26 @@ export default function ProductCatalog() {
             </button>
 
               {/* Add Product — pill shape with shadow */}
+              {/* Add Product */}
               <button
                 onClick={() => setPanel({ type: "add" })}
                 className="flex items-center gap-1.5 text-white font-bold text-[13px] px-[18px] py-[9px] rounded-full hover:opacity-90 transition"
-                style={{ background: "#FF4500", boxShadow: "0 3px 10px rgba(255,69,0,0.22)" }}
-              >
+                style={{
+                  background: "#FF4500",
+                  boxShadow: "0 3px 10px rgba(255,69,0,0.22)",
+                }}>
                 <Plus size={14} /> Add Product
               </button>
 
-              {/* ZA avatar — circle */}
+              {/* Show Archived */}
+              <button onClick={() => setShowArchived(!showArchived)}
+                className="border border-slate-300 rounded-lg px-3 py-2 text-sm">
+                {showArchived ? "Show Active Products" : "Show Archived Products"}
+              </button>
+              {/* ZA avatar */}
               <div
                 className="w-9 h-9 rounded-full flex items-center justify-center text-white text-[13px] font-bold cursor-pointer select-none flex-shrink-0"
-                style={{ background: "#FF4500" }}
-              >
+                style={{ background: "#FF4500" }}>
                 ZA
               </div>
             </div>
@@ -1019,13 +1062,20 @@ export default function ProductCatalog() {
                           <Pencil size={15} />
                         </button>
                         {/* Delete */}
-                        <button
-                          title="Delete"
-                          onClick={() => handleDelete(p.id)}
-                          className="p-1.5 rounded-md text-red-400 hover:text-red-600 hover:bg-red-50 transition"
-                        >
-                          <Trash2 size={15} />
-                        </button>
+                        {showArchived ? (
+                          <button
+                            title="Restore"
+                            onClick={() => handleRestore(p.id)}
+                            className="p-1.5 rounded-md text-green-600 hover:bg-green-50">
+                            Restore
+                          </button>
+                        ) : (
+                          <button title="Delete"
+                            onClick={() => handleDelete(p.id)}
+                            className="p-1.5 rounded-md text-red-400 hover:text-red-600 hover:bg-red-50 transition">
+                            <Trash2 size={15} />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>

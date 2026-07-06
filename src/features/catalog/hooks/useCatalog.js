@@ -15,7 +15,38 @@ import {
   getCatalogProduct,
   createCatalogProduct,
   updateCatalogProduct,
+  deleteCatalogProduct,
+  restoreCatalogProduct,
 } from "../api/catalogApi";
+
+export const useDeleteCatalogProduct = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: deleteCatalogProduct,
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["catalog-products"],
+      });
+    },
+  });
+};
+
+export const useRestoreCatalogProduct = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: restoreCatalogProduct,
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["catalog-products"],
+      });
+    },
+  });
+};
+
 
 export const useUpdateCatalogProduct = () => {
   const queryClient = useQueryClient();
