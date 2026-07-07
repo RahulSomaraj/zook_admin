@@ -38,20 +38,18 @@ export const restoreCatalogProduct = async (id) => {
 // Categories
 export const getCategories = async (params = {}) => {
   const { data } = await api.get("/admin/categories", {
-    params: {
-      ...params,
-      includeDeleted: true,
-    },
+    params,
   });
 
   return data;
 };
 
 // Brands
-export const getBrands = async (params) => {
+export const getBrands = async (params = {}) => {
   const { data } = await api.get("/admin/brands", {
     params,
   });
+
   return data;
 };
 

@@ -96,7 +96,9 @@ const deleteCategory = useDeleteCategory();
     isLoading,
     isError,
     error,
-  } = useCategories();
+    } = useCategories({
+    includeDeleted: true,
+  });
 
   if (isLoading) {
     return (
@@ -199,7 +201,13 @@ const deleteCategory = useDeleteCategory();
                   </td>
                   <td className="px-4 py-3">{category.sortOrder}</td>
                   
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3">{category.deletedAt ? (
+                    <button onClick={() => handleRestore(category.id)}
+                      className="text-green-600">
+                        Restore
+                    </button>
+                      ) : (
+                      <>
                     <button onClick={() => {
                       setEditingCategory(category);
                       setFormData({
@@ -208,24 +216,19 @@ const deleteCategory = useDeleteCategory();
                         icon: category.icon,
                         isActive: category.isActive,
                         sortOrder: category.sortOrder,
-                      });
+                        });
                       setShowModal(true);
                       }}
                       className="text-blue-600 mr-3">
-                        Edit
+                      Edit
                     </button>
 
-                    {category.deletedAt ? (
-                      <button onClick={() => handleRestore(category.id)}
-                        className="text-green-600">
-                        Restore
-                      </button>
-                    ) : (
-                      <button onClick={() => handleDelete(category.id)}
-                        className="text-red-600">
-                        Delete
-                      </button>
-                    )}
+                    <button onClick={() => handleDelete(category.id)}
+                      className="text-red-600">
+                      Delete
+                    </button>
+                      </>
+                      )}
                   </td>
                 </tr>
               ))
