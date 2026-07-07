@@ -21,11 +21,41 @@ const navSections = [
   {
     label: "LISTINGS & C2C",
     items: [
-      { id: "all-listings", icon: "🏷️", label: "All Listings", path: "/all-listings" },
-      { id: "c2c-drafts", icon: "✅", label: "C2C Drafts", path: "/c2c-drafts", badge: 3, badgeColor: "bg-orange-500 text-white" },
-      { id: "product-catalog", icon: "📦", label: "Product Catalog", path: "/product-catalog" },
+      {
+        id: "all-listings",
+        icon: "🏷️",
+        label: "All Listings",
+        path: "/all-listings",
+      },
+      {
+        id: "c2c-drafts",
+        icon: "✅",
+        label: "C2C Drafts",
+        path: "/c2c-drafts",
+        badge: 3,
+        badgeColor: "bg-orange-500 text-white",
+      },
+      {
+        id: "product-catalog",
+        icon: "📦",
+        label: "Product Catalog",
+        path: "/product-catalog",
+      },
+      {
+        id: "categories",
+        icon: "📂",
+        label: "Categories",
+        path: "/categories",
+      },
+      {
+        id: "brands",
+        icon: "🏷️",
+        label: "Brands",
+        path: "/brands",
+      },
     ],
   },
+
   {
     label: "ORDERS",
     items: [

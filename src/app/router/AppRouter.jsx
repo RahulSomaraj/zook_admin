@@ -14,6 +14,8 @@ import C2CDrafts from "../../pages/C2CDrafts";
 import KycReview from "../../pages/KycReview";
 import StrikeManagement from "../../pages/StrikeManagement";
 import VendorList from "../../features/vendors/components/VendorList";
+import Categories from "../../pages/Categories";
+import Brands from "../../pages/Brands";
 
 /**
  * Two route groups:
@@ -39,6 +41,8 @@ export default function AppRouter() {
         <Route path={ROUTES.dashboard} element={<Overview />} />
         <Route path={ROUTES.overview} element={<Overview />} />
         <Route path={ROUTES.productCatalog} element={<ProductCatalog />} />
+        <Route path="/categories" element={<Categories />} />
+        <Route path="/brands" element={<Brands />} />
         <Route path={ROUTES.fraudReview} element={<FraudReview />} />
         <Route path={ROUTES.allOrders} element={<AllOrders />} />
         <Route path={ROUTES.c2cDrafts} element={<C2CDrafts />} />

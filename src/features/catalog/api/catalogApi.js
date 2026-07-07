@@ -36,10 +36,14 @@ export const restoreCatalogProduct = async (id) => {
 
 
 // Categories
-export const getCategories = async (params) => {
+export const getCategories = async (params = {}) => {
   const { data } = await api.get("/admin/categories", {
-    params,
+    params: {
+      ...params,
+      includeDeleted: true,
+    },
   });
+
   return data;
 };
 
