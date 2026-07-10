@@ -3,6 +3,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useLogin } from "../hooks/useLogin";
 import { ROUTES } from "../../../app/router/routes";
 
+import loginIllustration from "../../../assets/images/login-illustration.png";
+
 /**
  * Login screen, themed to match the Zook admin (black + orange).
  * Form state is local (useState); the network call + auth state are handled

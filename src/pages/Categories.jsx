@@ -6,42 +6,175 @@ import {
   useRestoreCategory,
 } from "../features/catalog/hooks/useCatalog";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import {
+  Search,
+  Plus,
+  Pencil,
+  Trash2,
+  Smartphone,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
+
+function SectionLabel({ children }) {
+  return (
+    <p className="text-[10px] font-bold text-slate-400 tracking-widest uppercase mt-4 mb-2.5">
+      {children}
+    </p>
+  );
+}
+
+function FormField({ label, children }) {
+  return (
+    <div className="mb-3">
+      <label className="block text-xs font-semibold text-gray-700 mb-1">{label}</label>
+      {children}
+    </div>
+  );
+}
+
+// Shared input / select class
+const inputCls =
+  "w-full border border-slate-200 rounded-lg px-2.5 py-2 text-[13px] text-slate-900 bg-white outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-400 transition";
+
+function EditCategoryPanel({
+  category,
+  onClose,
+  onSave,
+  isPending,
+}) {
+  const [form, setForm] = useState({
+    name: category.name,
+    slug: category.slug,
+    icon: category.icon || "",
+    isActive: category.isActive,
+    sortOrder: category.sortOrder,
+  });
+
+  useEffect(() => {
+    setForm({
+      name: category.name,
+      slug: category.slug,
+      icon: category.icon || "",
+      isActive: category.isActive,
+      sortOrder: category.sortOrder,
+    });
+  }, [category]);
+
+  return (
+    <div className="w-full lg:w-[340px] lg:min-w-[320px] lg:max-w-[360px] lg:flex-shrink-0 bg-white border-l border-slate-100 flex flex-col overflow-y-auto max-h-screen">
+      <div className="px-5 pt-6 pb-4">
+
+        <div className="flex justify-between items-center mb-5">
+          <h3 className="text-[15px] font-bold">
+            {category.id ? "Edit Category" : "Add Category"}
+          </h3>
+
+          <button
+            onClick={onClose}
+            className="text-slate-400 hover:text-slate-600"
+          >
+            ✕
+          </button>
+        </div>
+
+        <SectionLabel>BASIC DETAILS</SectionLabel>
+
+        <FormField label="Category Name">
+          <input
+            className={inputCls}
+            value={form.name}
+            onChange={(e) =>
+              setForm({ ...form, name: e.target.value })
+            }
+          />
+        </FormField>
+
+        <FormField label="Slug">
+          <input
+            className={inputCls}
+            value={form.slug}
+            onChange={(e) =>
+              setForm({ ...form, slug: e.target.value })
+            }
+          />
+        </FormField>
+
+        <FormField label="Icon">
+          <input
+            className={inputCls}
+            value={form.icon}
+            onChange={(e) =>
+              setForm({ ...form, icon: e.target.value })
+            }
+          />
+        </FormField>
+
+        <FormField label="Sort Order">
+          <input
+            type="number"
+            className={inputCls}
+            value={form.sortOrder}
+            onChange={(e) =>
+              setForm({
+                ...form,
+                sortOrder: Number(e.target.value),
+              })
+            }
+          />
+        </FormField>
+
+        <div className="flex justify-between mt-6">
+          <button
+            onClick={onClose}
+            className="border px-4 py-2 rounded-lg"
+          >
+            Cancel
+          </button>
+
+          <button
+            onClick={() => onSave(form)}
+            disabled={isPending}
+            className="bg-orange-500 text-white px-4 py-2 rounded-lg"
+          >
+            {isPending
+              ? "Saving..."
+              : category.id
+              ? "Save Changes"
+              : "Create Category"}
+          </button>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
 
 export default function Categories() {
 
-  const [showModal, setShowModal] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    slug: "",
-    icon: "",
-    isActive: true,
-    sortOrder: 0,
-  });
-
 const createCategory = useCreateCategory();
 const [editingCategory, setEditingCategory] = useState(null);
+const emptyCategory = {
+  id: null,
+  name: "",
+  slug: "",
+  icon: "",
+  isActive: true,
+  sortOrder: 0,
+};
 const updateCategory = useUpdateCategory();
-const handleSave = () => {
-  if (editingCategory) {
+const handleSave = (form) => {
+  if (editingCategory?.id) {
     updateCategory.mutate({
       id: editingCategory.id,
-      payload: formData,
+      payload: form,
       },
       {
         onSuccess: () => {
           alert("Category updated successfully!");
-
-          setShowModal(false);
           setEditingCategory(null);
-
-          setFormData({
-            name: "",
-            slug: "",
-            icon: "",
-            isActive: true,
-            sortOrder: 0,
-          });
         },
 
         onError: (error) => {
@@ -53,19 +186,10 @@ const handleSave = () => {
       }
     );
   } else {
-    createCategory.mutate(formData, {
+    createCategory.mutate(form, {
       onSuccess: () => {
         alert("Category created successfully!");
-
-        setShowModal(false);
-
-        setFormData({
-          name: "",
-          slug: "",
-          icon: "",
-          isActive: true,
-          sortOrder: 0,
-        });
+        setEditingCategory(null);
       },
 
       onError: (error) => {
@@ -137,36 +261,88 @@ const deleteCategory = useDeleteCategory();
 };
 
   return (
-    <div className="p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">Categories</h1>
+    <div className="flex min-h-screen">
+  <div className="flex-1 bg-slate-50 text-slate-700 p-6">
 
-        <button onClick={() => {
-          setEditingCategory(null);
-          setFormData({
-            name: "",
-            slug: "",
-            icon: "",
-            isActive: true,
-            sortOrder: 0,
-          });
-          setShowModal(true);
-          }}
-          className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg">
-            + Add Category
-        </button>
+  {/* Header */}
+  <header className="flex justify-between items-center mb-8">
+
+    <div>
+      <div className="flex items-baseline gap-2">
+        <h1 className="text-2xl font-bold text-slate-900">
+          Categories 
+        </h1>
       </div>
+    </div>
 
-      <div className="overflow-x-auto rounded-lg border">
-        <table className="min-w-full">
-          <thead className="bg-slate-100">
-            <tr>
-              <th className="px-4 py-3 text-left">Name</th>
-              <th className="px-4 py-3 text-left">Slug</th>
-              <th className="px-4 py-3 text-left">Icon</th>
-              <th className="px-4 py-3 text-left">Status</th>
-              <th className="px-4 py-3 text-left">Sort Order</th>
-              <th className="px-4 py-3 text-left">Actions</th>
+    <div className="flex items-center gap-2">
+
+  {/* Notification */}
+  <button className="w-9 h-9 rounded-[10px] flex items-center justify-center border border-[#EBEBEB] text-base cursor-pointer relative">
+    🔔
+    <span className="absolute top-1.5 right-1.5 w-[7px] h-[7px] bg-[#FF4500] rounded-full border-[1.5px] border-white" />
+  </button>
+
+  {/* ZA Avatar */}
+  <div
+    className="w-9 h-9 rounded-full flex items-center justify-center text-white text-[13px] font-bold cursor-pointer select-none flex-shrink-0"
+    style={{ background: "#FF4500" }}
+  >
+    ZA
+  </div>
+
+</div>
+
+  </header>
+
+  {/* Search & Add Button */}
+  <div className="flex justify-between items-center mb-6">
+
+    <div className="relative w-96">
+
+      <Search
+        className="absolute left-3 top-1/2 -translate-y-1/2 text-sky-500"
+        size={18}
+      />
+
+      <input
+        type="text"
+        placeholder="Search categories..."
+        className="w-full pl-10 pr-4 py-2 bg-white border rounded-full"
+      />
+
+    </div>
+
+    <div className="flex items-center gap-3">
+
+      <button
+        onClick={() => {
+          setEditingCategory(emptyCategory);
+          }}
+          className="flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white px-5 py-2 rounded-full">
+        <Plus size={16} />
+        Add Category
+      </button>
+
+      <span className="text-sm text-slate-400">
+        {categories.length} categories
+      </span>
+
+    </div>
+
+  </div>
+
+      <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+        <div className="overflow-x-auto">
+        <table className="w-full text-left border-collapse">
+          <thead>
+            <tr className="bg-slate-50/70 border-b border-slate-100 text-[11px] font-semibold tracking-wider uppercase text-slate-400">
+              <th className="py-3 px-6">Name</th>
+              <th className="py-3 px-6">Slug</th>
+              <th className="py-3 px-6 text-center">Icon</th>
+              <th className="py-3 px-6">Status</th>
+              <th className="py-3 px-6">Sort Order</th>
+              <th className="py-3 px-6 text-right pr-8"> Actions</th>
             </tr>
           </thead>
 
@@ -184,150 +360,120 @@ const deleteCategory = useDeleteCategory();
               categories.map((category) => (
                 <tr
                   key={category.id}
-                  className={`border-t ${
+                  className={`border-b border-slate-100 transition-colors ${
                   category.deletedAt
-                  ? "bg-gray-100 text-gray-400"
-                  : "hover:bg-slate-50"
-                  }`}>
-                  <td className="px-4 py-3">{category.name}</td>
+                  ? "bg-gray-50 text-gray-400"
+                  : "hover:bg-slate-50/60"
+                  }`}
+                >
+                  <td className="py-4 px-6">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-full bg-purple-100 border border-purple-200 flex items-center justify-center text-purple-600">
+                        {category.icon ? (
+                        <span className="text-sm">{category.icon}</span>
+                          ) : (
+                          <Smartphone size={16} />
+                          )}
+                      </div>
+                        <span className="font-medium text-slate-900">
+                          {category.name}
+                        </span>
+                    </div>
+                  </td>
                   <td className="px-4 py-3">{category.slug}</td>
-                  <td className="px-4 py-3">{category.icon}</td>
-                  <td className="px-4 py-3">
-                    {category.deletedAt
-                      ? "Deleted"
-                      : category.isActive
-                      ? "Active"
-                      : "Inactive"}
+                  <td className="py-4 px-6">
+                    <div className="flex justify-center">
+                      <div className="w-8 h-8 rounded-full bg-purple-100 border border-purple-200 flex items-center justify-center text-purple-600">
+                        {category.icon ? (
+                        <span className="text-sm">{category.icon}</span>
+                          ) : (
+                        <Smartphone size={15} />
+                        )}
+                      </div>
+                    </div>
+                  </td>
+                  <td className="py-4 px-6">{category.deletedAt ? (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-700">
+                      Deleted
+                    </span>
+                    ) : category.isActive ? (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">
+                      Active
+                    </span>
+                    ) : (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-600">
+                      Inactive
+                    </span>
+                    )}
                   </td>
                   <td className="px-4 py-3">{category.sortOrder}</td>
                   
-                  <td className="px-4 py-3">{category.deletedAt ? (
+                  <td className="py-4 px-6">{category.deletedAt ? (
                     <button onClick={() => handleRestore(category.id)}
-                      className="text-green-600">
+                      className="text-green-600 hover:text-green-700 font-medium">
                         Restore
                     </button>
                       ) : (
-                      <>
-                    <button onClick={() => {
-                      setEditingCategory(category);
-                      setFormData({
-                        name: category.name,
-                        slug: category.slug,
-                        icon: category.icon,
-                        isActive: category.isActive,
-                        sortOrder: category.sortOrder,
-                        });
-                      setShowModal(true);
-                      }}
-                      className="text-blue-600 mr-3">
-                      Edit
-                    </button>
-
-                    <button onClick={() => handleDelete(category.id)}
-                      className="text-red-600">
-                      Delete
-                    </button>
-                      </>
+                      <div className="flex justify-end gap-2">
+                        <button onClick={() => {
+                          setEditingCategory(category);
+                          }}
+                          className="p-2 rounded-lg border border-slate-200 bg-white hover:bg-orange-50 hover:text-orange-600 transition-colors">
+                          <Pencil size={15} />
+                        </button>
+                        <button onClick={() => handleDelete(category.id)}
+                          className="p-2 rounded-lg border border-slate-200 bg-white hover:bg-red-50 hover:text-red-600 transition-colors">
+                          <Trash2 size={15} />
+                        </button>
+                      </div>
                       )}
-                  </td>
+                    </td>
                 </tr>
               ))
             )}
           </tbody>
         </table>
+        </div>
       </div>
-      {showModal && (
-  <div className="fixed inset-0 bg-black/40 flex items-center justify-center">
-    <div className="bg-white rounded-xl p-6 w-[420px]">
-      <h2 className="text-xl font-bold mb-4">
-        {editingCategory ? "Edit Category" : "Add Category"}
-      </h2>
+        {/* Pagination */}
+    <div className="flex justify-end mt-6">
+      <div className="flex items-center gap-1 bg-white p-2 rounded-full border border-slate-100 shadow-sm">
 
-      <div className="space-y-3">
-
-        <input
-          className="w-full border rounded-lg p-2"
-          placeholder="Category Name"
-          value={formData.name}
-          onChange={(e) =>
-            setFormData({
-              ...formData,
-              name: e.target.value,
-            })
-          }
-        />
-
-        <input
-          className="w-full border rounded-lg p-2"
-          placeholder="Slug"
-          value={formData.slug}
-          onChange={(e) =>
-            setFormData({
-              ...formData,
-              slug: e.target.value,
-            })
-          }
-        />
-
-        <input
-          className="w-full border rounded-lg p-2"
-          placeholder="Icon (📱)"
-          value={formData.icon}
-          onChange={(e) =>
-            setFormData({
-              ...formData,
-              icon: e.target.value,
-            })
-          }
-        />
-
-        <input
-          type="number"
-          className="w-full border rounded-lg p-2"
-          placeholder="Sort Order"
-          value={formData.sortOrder}
-          onChange={(e) =>
-            setFormData({
-              ...formData,
-              sortOrder: Number(e.target.value),
-            })
-          }
-        />
-
-      </div>
-
-      <div className="flex justify-end gap-3 mt-6">
-
-        <button
-          onClick={() => {
-            setShowModal(false);
-            setEditingCategory(null);
-            setFormData({
-              name: "",
-              slug: "",
-              icon: "",
-              isActive: true,
-              sortOrder: 0,
-            });
-          }}
-          className="border px-4 py-2 rounded-lg">
-          Cancel
+        <button className="p-2 rounded-full hover:bg-slate-100">
+          <ChevronLeft size={16} />
         </button>
 
-        <button onClick={handleSave}
-          disabled={createCategory.isPending}
-          className="bg-orange-500 text-white px-4 py-2 rounded-lg disabled:opacity-50">
-          {createCategory.isPending || updateCategory.isPending
-            ? "Saving..."
-            : editingCategory
-            ? "Update"
-            : "Save"}
+        <button className="w-8 h-8 rounded-full bg-orange-600 text-white text-sm font-medium">
+          1
+        </button>
+
+        <button className="w-8 h-8 rounded-full hover:bg-slate-100 text-sm">
+          2
+        </button>
+
+        <button className="w-8 h-8 rounded-full hover:bg-slate-100 text-sm">
+          3
+        </button>
+
+        <button className="p-2 rounded-full hover:bg-slate-100">
+          <ChevronRight size={16} />
         </button>
 
       </div>
     </div>
-  </div>
+    </div>   {/* closes flex-1 */}
+
+{editingCategory && (
+  <EditCategoryPanel
+    category={editingCategory}
+    onClose={() => setEditingCategory(null)}
+    onSave={handleSave}
+    isPending={
+      createCategory.isPending ||
+      updateCategory.isPending
+    }
+  />
 )}
-    </div>
+  </div>
   );
 }

@@ -21,6 +21,7 @@ const PRODUCTS = [
     model: "iPhone 14 Pro",
     category: "Smartphones",
     year: 2022,
+    priceRange: "₹80,000 - ₹1,20,000",
     variants: ["128GB", "256GB", "512GB", "1TB"],
     colours: ["Deep Purple", "Gold", "Silver", "Space Black"],
     activeListings: 14,
@@ -262,6 +263,7 @@ function EditProductPanel({product,onClose,onSave,brands,categories,}) {
     model: product.model,
     year: product.year,
     category: product.categoryId,
+    priceRange: product.priceRange || "",
     variants: product.specs?.storage || [],
     colours: product.specs?.colors || [],
     specs: product.specs?.keySpecs || [],
@@ -276,6 +278,7 @@ function EditProductPanel({product,onClose,onSave,brands,categories,}) {
       model: product.model,
       year: product.year,
       category: product.categoryId,
+      priceRange: product.priceRange || "",
       variants: product.specs?.storage || [],
       colours: product.specs?.colors || [],
       specs: product.specs?.keySpecs || [],
@@ -369,6 +372,13 @@ function EditProductPanel({product,onClose,onSave,brands,categories,}) {
                 className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
               />
             </div>
+          </FormField>
+          <FormField label="Price Range *">
+            <input
+              className={inputCls}
+              placeholder="e.g. ₹50,000 - ₹80,000"
+              value={form.priceRange}
+              onChange={(e)=>set("priceRange", e.target.value)}/>
           </FormField>
         </div>
 
@@ -466,6 +476,7 @@ function AddProductPanel({onClose,categories,brands,}) {
     model: "",
     year: "",
     category: "",
+    priceRange:"",
     variants: [],
     colours: [],
     specs: [],
@@ -488,6 +499,7 @@ function AddProductPanel({onClose,categories,brands,}) {
       categoryId: form.category,
       model: form.model,
       year: Number(form.year),
+      priceRange: form.priceRange,
       stockImageUrl: "https://via.placeholder.com/600x600.png",
       specs: {
         storage: form.variants,
@@ -607,6 +619,13 @@ function AddProductPanel({onClose,categories,brands,}) {
                 className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
               />
             </div>
+          </FormField>
+          <FormField label="Price Range *">
+            <input
+              className={inputCls}
+              placeholder="e.g. ₹30,000 - ₹50,000"
+              value={form.priceRange}
+              onChange={(e)=>set("priceRange", e.target.value)}/>
           </FormField>
         </div>
 
@@ -849,6 +868,7 @@ export default function ProductCatalog() {
           brandId: updatedProduct.brand,
           model: updatedProduct.model,
           year: Number(updatedProduct.year),
+          priceRange: updatedProduct.priceRange,
           categoryId: updatedProduct.category,
           stockImageUrl: panel.product.stockImageUrl,
           specs: {
@@ -981,6 +1001,7 @@ export default function ProductCatalog() {
                   "PRODUCT",
                   "CATEGORY",
                   "YEAR",
+                  "PRICE RANGE",
                   "VARIANTS",
                   "ACTIVE LISTINGS",
                   "STATUS",
@@ -1026,7 +1047,7 @@ export default function ProductCatalog() {
                     </td>
 
                     <td className="py-3.5 pr-4 text-[13px] text-gray-600">{p.year}</td>
-
+                    <td className="py-3.5 pr-4 text-[13px] text-slate-600">{p.priceRange || "-"}</td>
                     <td className="py-3.5 pr-4 text-xs text-slate-500 max-w-[180px]">
                       {p.specs?.storage?.join(" / ") || "-"}
                     </td>
