@@ -9,6 +9,12 @@ import {
   useRestoreCatalogProduct,
 } from "../features/catalog/hooks/useCatalog";
 
+import {
+  getSignedUploadUrl,
+  getSignedDownloadUrl,
+  uploadFile,
+} from "../features/storage/api/storageApi";
+
 import { useState, useEffect } from "react";
 import {Search,ChevronDown,Plus,Eye,Pencil,Trash2,X,Lock,ChevronLeft,ChevronRight,Bell,
 } from "lucide-react";
@@ -482,6 +488,9 @@ function AddProductPanel({onClose,categories,brands,}) {
     specs: [],
     description: "",
     status: "active",
+
+    stockImageUrl: "",
+    imageFile: null,
   });
   const set = (key, val) => setForm((f) => ({ ...f, [key]: val }));
 
@@ -493,14 +502,51 @@ function AddProductPanel({onClose,categories,brands,}) {
     }
   };
 
-  const handleCreate = (status) => {
+  const handleImageUpload = async () => {
+  if (!form.imageFile) return "";
+
+  try {
+    // Step 1: Get signed upload URL
+    const signResponse = await getSignedUploadUrl({
+      bucket: "zook_data",
+      filename: form.imageFile.name,
+      folder: "catalog_products",
+      upsert: false,
+    });
+
+    console.log("Signed Upload:", signResponse);
+
+    // Upload image to storage
+    await uploadFile(
+      signResponse.data.signedUrl,
+      form.imageFile
+      );
+
+      console.log("Image uploaded successfully!");
+      const downloadResponse = await getSignedDownloadUrl({
+  bucket: signResponse.data.bucket,
+  key: signResponse.data.key,
+  expiresIn: 86400,
+});
+
+console.log("Download URL:", downloadResponse);
+    return downloadResponse.data.signedUrl;
+  } catch (error) {
+    console.error(error);
+    alert("Failed to prepare image upload.");
+    return "";
+  }
+};
+
+  const handleCreate = async (status) => {
+  const imageUrl = await handleImageUpload();
     console.log({
       brandId: form.brand,
       categoryId: form.category,
       model: form.model,
       year: Number(form.year),
       priceRange: form.priceRange,
-      stockImageUrl: "https://via.placeholder.com/600x600.png",
+      stockImageUrl: imageUrl,
       specs: {
         storage: form.variants,
         colors: form.colours,
@@ -517,7 +563,7 @@ function AddProductPanel({onClose,categories,brands,}) {
       categoryId: form.category,
       model: form.model,
       year: Number(form.year),
-      stockImageUrl: "https://via.placeholder.com/600x600.png",
+      stockImageUrl: imageUrl,
       specs: {
         storage: form.variants,
         colors: form.colours,
@@ -548,17 +594,43 @@ function AddProductPanel({onClose,categories,brands,}) {
             <X size={16} />
           </button>
         </div>
-
         {/* Upload area */}
-        <div className="border-2 border-dashed border-orange-200 bg-orange-50 rounded-xl flex flex-col items-center justify-center py-7 mb-5 cursor-pointer hover:bg-orange-100 transition">
-          <div className="w-11 h-11 bg-slate-200 rounded-lg flex items-center justify-center text-2xl mb-2.5">
-            🖼️
-          </div>
-          <p className="text-[13px] font-semibold text-slate-900 m-0">Upload official stock photo</p>
-          <p className="text-[11px] text-slate-400 mt-1 m-0">
-            This is shown as the hero image on all listings · JPG, PNG
-          </p>
-        </div>
+<label className="border-2 border-dashed border-orange-200 bg-orange-50 rounded-xl flex flex-col items-center justify-center py-7 mb-5 cursor-pointer hover:bg-orange-100 transition">
+
+  <input
+  type="file"
+  accept="image/*"
+  className="hidden"
+  onChange={(e) => {
+    const file = e.target.files[0];
+
+    if (!file) return;
+
+    setForm((prev) => ({
+      ...prev,
+      imageFile: file,
+    }));
+  }}
+/>
+
+  <div className="w-11 h-11 bg-slate-200 rounded-lg flex items-center justify-center text-2xl mb-2.5">
+    🖼️
+  </div>
+
+  <p className="text-[13px] font-semibold text-slate-900 m-0">
+    Upload official stock photo
+  </p>
+
+  <p className="text-[11px] text-slate-400 mt-1 m-0">
+    This is shown as the hero image on all listings · JPG, PNG
+  </p>
+  {form.imageFile && (
+  <p className="text-xs text-green-600 mt-2 font-medium">
+    Selected: {form.imageFile.name}
+  </p>
+)}
+
+</label>
 
         <SectionLabel>BASIC DETAILS</SectionLabel>
 
@@ -1030,8 +1102,11 @@ export default function ProductCatalog() {
                     {/* Product */}
                     <td className="py-3.5 pr-4 min-w-[200px]">
                       <div className="flex items-center gap-2.5">
-                        <div className="w-9 h-9 bg-slate-100 rounded-lg flex items-center justify-center text-lg flex-shrink-0">
-                          {CATEGORY_EMOJI[p.category?.name] || "📦"}
+                        <div className="w-9 h-9 rounded-lg overflow-hidden bg-slate-100 flex-shrink-0">
+                          <img
+                            src={p.stockImageUrl}
+                            alt={p.model}
+                            className="w-full h-full object-cover"/>
                         </div>
                         <div>
                           <p className="m-0 font-semibold text-[14px] text-slate-900">
