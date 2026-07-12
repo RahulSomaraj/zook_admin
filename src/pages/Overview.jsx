@@ -13,9 +13,6 @@ export default function Overview() {
         
         {/* Right Admin Icons */}
         <div className="flex items-center gap-3">
-          <button className="w-8 h-8 rounded-full bg-blue-50/50 border border-slate-100 flex items-center justify-center shadow-sm text-slate-600 hover:bg-slate-100 transition">
-            🔍
-          </button>
           <button className="w-8 h-8 rounded-full bg-orange-50/50 border border-slate-100 flex items-center justify-center shadow-sm text-slate-600 hover:bg-slate-100 transition relative">
             🔔
             <div className="absolute top-2 right-2.5 w-1.5 h-1.5 bg-orange-500 rounded-full" />

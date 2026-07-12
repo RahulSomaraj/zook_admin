@@ -27,7 +27,7 @@ const PRODUCTS = [
     model: "iPhone 14 Pro",
     category: "Smartphones",
     year: 2022,
-    priceRange: "₹80,000 - ₹1,20,000",
+    //priceRange: "₹80,000 - ₹1,20,000",
     variants: ["128GB", "256GB", "512GB", "1TB"],
     colours: ["Deep Purple", "Gold", "Silver", "Space Black"],
     activeListings: 14,
@@ -269,13 +269,14 @@ function EditProductPanel({product,onClose,onSave,brands,categories,}) {
     model: product.model,
     year: product.year,
     category: product.categoryId,
-    priceRange: product.priceRange || "",
     variants: product.specs?.storage || [],
     colours: product.specs?.colors || [],
     specs: product.specs?.keySpecs || [],
     description: product.description || "",
     status: product.status,
     activeListings: product._count?.products || 0,
+
+    imageFile: null,
   });
 
   useEffect(() => {
@@ -284,13 +285,13 @@ function EditProductPanel({product,onClose,onSave,brands,categories,}) {
       model: product.model,
       year: product.year,
       category: product.categoryId,
-      priceRange: product.priceRange || "",
       variants: product.specs?.storage || [],
       colours: product.specs?.colors || [],
       specs: product.specs?.keySpecs || [],
       description: product.description || "",
       status: product.status,
       activeListings: product._count?.products || 0,
+      imageFile: null,
     });
   }, [product]);
 
@@ -313,14 +314,48 @@ function EditProductPanel({product,onClose,onSave,brands,categories,}) {
         </div>
 
         {/* Photo */}
-        <div className="bg-orange-50 border border-orange-200 rounded-xl flex flex-col items-center justify-center py-6 mb-5">
-          <div className="w-14 h-14 bg-slate-200 rounded-lg flex items-center justify-center text-3xl mb-2.5">
-            {CATEGORY_EMOJI[form.category] || "📦"}
-          </div>
-          <button className="bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-orange-500 font-semibold flex items-center gap-1 hover:bg-orange-50 transition">
-            <Pencil size={10} /> Change photo
-          </button>
-        </div>
+        <label className="bg-orange-50 border border-orange-200 rounded-xl flex flex-col items-center justify-center py-6 mb-5 cursor-pointer hover:bg-orange-100 transition">
+
+  <input
+    type="file"
+    accept="image/*"
+    className="hidden"
+    onChange={(e) => {
+  const file = e.target.files[0];
+
+  if (!file) return;
+
+  setForm((prev) => ({
+    ...prev,
+    imageFile: file,
+  }));
+}}
+  />
+
+  <div className="w-20 h-20 rounded-lg overflow-hidden bg-slate-100 mb-3">
+    <img
+      src={
+        form.imageFile
+    ? URL.createObjectURL(form.imageFile)
+    : product.stockImageUrl
+      }
+      alt={form.model}
+      className="w-full h-full object-cover"
+    />
+  </div>
+
+  <span className="bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-orange-500 font-semibold flex items-center gap-1">
+  <Pencil size={10} />
+  Change photo
+</span>
+
+  {form.imageFile && (
+    <p className="text-xs text-green-600 mt-2">
+      {form.imageFile.name}
+    </p>
+  )}
+
+</label>
 
         <SectionLabel>BASIC DETAILS</SectionLabel>
 
@@ -378,13 +413,6 @@ function EditProductPanel({product,onClose,onSave,brands,categories,}) {
                 className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
               />
             </div>
-          </FormField>
-          <FormField label="Price Range *">
-            <input
-              className={inputCls}
-              placeholder="e.g. ₹50,000 - ₹80,000"
-              value={form.priceRange}
-              onChange={(e)=>set("priceRange", e.target.value)}/>
           </FormField>
         </div>
 
@@ -462,11 +490,14 @@ function EditProductPanel({product,onClose,onSave,brands,categories,}) {
             Discard
           </button>
           <button
-            onClick={() => onSave(form)}
-            className="bg-orange-500 hover:bg-orange-600 text-white font-bold text-[13px] px-4 py-2 rounded-lg flex items-center gap-1.5 transition"
-          >
-            <Lock size={13} /> Save changes
-          </button>
+  onClick={() => {
+    console.log("Selected Image File:", form.imageFile);
+    onSave(form);
+  }}
+  className="bg-orange-500 hover:bg-orange-600 text-white font-bold text-[13px] px-4 py-2 rounded-lg flex items-center gap-1.5 transition"
+>
+  <Lock size={13} /> Save changes
+</button>
         </div>
       </div>
     </div>
@@ -545,7 +576,7 @@ console.log("Download URL:", downloadResponse);
       categoryId: form.category,
       model: form.model,
       year: Number(form.year),
-      priceRange: form.priceRange,
+      //priceRange: form.priceRange,
       stockImageUrl: imageUrl,
       specs: {
         storage: form.variants,
@@ -691,13 +722,6 @@ console.log("Download URL:", downloadResponse);
                 className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
               />
             </div>
-          </FormField>
-          <FormField label="Price Range *">
-            <input
-              className={inputCls}
-              placeholder="e.g. ₹30,000 - ₹50,000"
-              value={form.priceRange}
-              onChange={(e)=>set("priceRange", e.target.value)}/>
           </FormField>
         </div>
 
@@ -854,7 +878,7 @@ export default function ProductCatalog() {
   const [page, setPage] = useState(1);
   const [selectedProductId, setSelectedProductId] = useState(null);
 
-  const { mutate: updateProduct } = useUpdateCatalogProduct();
+  const { mutateAsync: updateProduct } = useUpdateCatalogProduct();
   const { data: categoriesData } = useCategories();
   const { data: brandsData } = useBrands();
   const { data: productData } = useCatalogProduct(selectedProductId);
@@ -931,35 +955,83 @@ export default function ProductCatalog() {
       },
     });
   };
+  const uploadNewImage = async (file) => {
+  if (!file) return "";
 
-  const handleSaveEdit = (updatedProduct) => {
-    updateProduct(
-      {
-        id: panel.product.id,
-        payload: {
-          brandId: updatedProduct.brand,
-          model: updatedProduct.model,
-          year: Number(updatedProduct.year),
-          priceRange: updatedProduct.priceRange,
-          categoryId: updatedProduct.category,
-          stockImageUrl: panel.product.stockImageUrl,
-          specs: {
-            storage: updatedProduct.variants,
-            colors: updatedProduct.colours,
-            keySpecs: updatedProduct.specs,
-          },
-          description: updatedProduct.description,
-          status: updatedProduct.status,
-        },
+  const signResponse = await getSignedUploadUrl({
+    bucket: "zook_data",
+    filename: file.name,
+    folder: "catalog_products",
+    upsert: false,
+  });
+
+  await uploadFile(
+    signResponse.data.signedUrl,
+    file
+  );
+
+  const downloadResponse = await getSignedDownloadUrl({
+    bucket: signResponse.data.bucket,
+    key: signResponse.data.key,
+    expiresIn: 86400,
+  });
+
+  return downloadResponse.data.signedUrl;
+};
+
+  const handleSaveEdit = async (updatedProduct) => {
+  let imageUrl = panel.product.stockImageUrl;
+
+  if (updatedProduct.imageFile) {
+    imageUrl = await uploadNewImage(updatedProduct.imageFile);
+    console.log("Uploaded URL:", imageUrl);
+  }
+
+  console.log("Update Payload", {
+    id: panel.product.id,
+    payload: {
+      brandId: updatedProduct.brand,
+      model: updatedProduct.model,
+      year: Number(updatedProduct.year),
+      categoryId: updatedProduct.category,
+      stockImageUrl: imageUrl,
+      specs: {
+        storage: updatedProduct.variants,
+        colors: updatedProduct.colours,
+        keySpecs: updatedProduct.specs,
       },
-      {
-        onSuccess: () => {
-          setPanel(null);
-          setSelectedProductId(null);
-        },
-      }
-    );
-  };
+      description: updatedProduct.description,
+      status: updatedProduct.status,
+    },
+  });
+  try {
+  await updateProduct({
+    id: panel.product.id,
+    payload: {
+      brandId: updatedProduct.brand,
+      model: updatedProduct.model,
+      year: Number(updatedProduct.year),
+      categoryId: updatedProduct.category,
+      stockImageUrl: imageUrl,
+      specs: {
+        storage: updatedProduct.variants,
+        colors: updatedProduct.colours,
+        keySpecs: updatedProduct.specs,
+      },
+      description: updatedProduct.description,
+      status: updatedProduct.status,
+    },
+  });
+
+  // Close immediately after successful update
+  setPanel(null);
+  setSelectedProductId(null);
+  } catch (error) {
+    console.log("Full Error:", error);
+    console.log("Response:", error.response);
+    console.log("Response Data:", error.response?.data);
+  }
+};
 
   if (isLoading) {
     return <div className="p-8">Loading...</div>;

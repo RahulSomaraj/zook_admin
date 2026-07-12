@@ -138,6 +138,39 @@ export default function VendorList() {
       <div className="p-8 pt-2">
         {/* --- STATS CARDS --- */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          {/* Pending Vendors */}
+          <div className="bg-white p-6 rounded-[20px] border border-slate-100 shadow-sm flex justify-between items-start">
+            <div>
+              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Pending Vendors</p>
+              <h3 className="text-3xl font-bold text-slate-900 mt-1">{pendingVendors}</h3>
+              <p className="text-xs text-green-600 font-semibold mt-2 flex items-center">Awaiting approval</p>
+            </div>
+            <div className="p-3 bg-slate-50 rounded-xl text-slate-400">
+              <AlertCircle size={22} className="stroke-[1.75]" />
+            </div>
+          </div>
+          {/* Approved Vendors */}
+          <div className="bg-white p-6 rounded-[20px] border border-slate-100 shadow-sm flex justify-between items-start">
+            <div>
+              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Approved Vendors</p>
+              <h3 className="text-3xl font-bold text-slate-900 mt-1">{approvedVendors}</h3>
+              <p className="text-xs text-green-600 font-semibold mt-2 flex items-center">Active stores</p>
+            </div>
+            <div className="p-3 bg-emerald-50 rounded-xl text-emerald-500">
+              <CheckCircle size={22} className="stroke-[1.75]" />
+            </div>
+          </div>
+          {/* Suspended Vendors */}
+          <div className="bg-white p-6 rounded-[20px] border border-slate-100 shadow-sm flex justify-between items-start">
+            <div>
+              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Suspended Vendors</p>
+              <h3 className="text-3xl font-bold text-slate-900 mt-1">{suspendedVendors}</h3>
+              <p className="text-xs text-green-600 font-semibold mt-2 flex items-center">Access restricted</p>
+            </div>
+            <div className="p-3 bg-slate-50 rounded-xl text-slate-400">
+              <Ban size={22} className="stroke-[1.75]" />
+            </div>
+          </div>
           {/* Total Vendors */}
           <div className="bg-white p-6 rounded-[20px] border border-slate-100 shadow-sm flex justify-between items-start">
             <div>
@@ -147,42 +180,6 @@ export default function VendorList() {
             </div>
             <div className="p-3 bg-slate-50 rounded-xl text-slate-400">
               <Users size={22} className="stroke-[1.75]" />
-            </div>
-          </div>
-
-          {/* Approved Vendors */}
-          <div className="bg-white p-6 rounded-[20px] border border-slate-100 shadow-sm flex justify-between items-start">
-            <div>
-              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Approved Vendors</p>
-              <h3 className="text-3xl font-bold text-slate-900 mt-1">{approvedVendors}</h3>
-              <p className="text-xs text-slate-400 font-medium mt-2">Approved vendors</p>
-            </div>
-            <div className="p-3 bg-emerald-50 rounded-xl text-emerald-500">
-              <CheckCircle size={22} className="stroke-[1.75]" />
-            </div>
-          </div>
-
-          {/* Suspended Vendors */}
-          <div className="bg-white p-6 rounded-[20px] border border-slate-100 shadow-sm flex justify-between items-start">
-            <div>
-              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Suspended Vendors</p>
-              <h3 className="text-3xl font-bold text-slate-900 mt-1">{suspendedVendors}</h3>
-              <p className="text-xs text-slate-400 font-medium mt-2">Suspended vendors</p>
-            </div>
-            <div className="p-3 bg-slate-50 rounded-xl text-slate-400">
-              <Ban size={22} className="stroke-[1.75]" />
-            </div>
-          </div>
-
-          {/* Pending Vendors */}
-          <div className="bg-white p-6 rounded-[20px] border border-slate-100 shadow-sm flex justify-between items-start">
-            <div>
-              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Pending Vendors</p>
-              <h3 className="text-3xl font-bold text-slate-900 mt-1">{pendingVendors}</h3>
-              <p className="text-xs text-slate-400 font-medium mt-2">Pending vendors</p>
-            </div>
-            <div className="p-3 bg-slate-50 rounded-xl text-slate-400">
-              <AlertCircle size={22} className="stroke-[1.75]" />
             </div>
           </div>
         </div>
