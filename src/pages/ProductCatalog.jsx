@@ -14,9 +14,10 @@ import {
   getSignedDownloadUrl,
   uploadFile,
 } from "../features/storage/api/storageApi";
+import { uploadNewImage } from "../features/storage/utils/uploadImage";
 
 import { useState, useEffect } from "react";
-import {Search,ChevronDown,Plus,Eye,Pencil,Trash2,X,Lock,ChevronLeft,ChevronRight,Bell,
+import {Search,ChevronDown,Plus,Eye,Pencil,Trash2,X,Lock,ChevronLeft,ChevronRight,Bell,Archive,
 } from "lucide-react";
 
 // ─── Dummy Data ───────────────────────────────────────────────────────────────
@@ -490,14 +491,13 @@ function EditProductPanel({product,onClose,onSave,brands,categories,}) {
             Discard
           </button>
           <button
-  onClick={() => {
-    console.log("Selected Image File:", form.imageFile);
-    onSave(form);
-  }}
-  className="bg-orange-500 hover:bg-orange-600 text-white font-bold text-[13px] px-4 py-2 rounded-lg flex items-center gap-1.5 transition"
->
-  <Lock size={13} /> Save changes
-</button>
+            onClick={() => {
+            console.log("Selected Image File:", form.imageFile);
+            onSave(form);
+            }}
+            className="bg-orange-500 hover:bg-orange-600 text-white font-bold text-[13px] px-4 py-2 rounded-lg flex items-center gap-1.5 transition">
+            <Lock size={13} /> Save changes
+          </button>
         </div>
       </div>
     </div>
@@ -828,8 +828,7 @@ console.log("Download URL:", downloadResponse);
             </select>
             <ChevronDown
               size={12}
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
-            />
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"/>
           </div>
         </FormField>
 
@@ -965,27 +964,29 @@ export default function ProductCatalog() {
     upsert: false,
   });
 
-  await uploadFile(
-    signResponse.data.signedUrl,
-    file
-  );
+  await uploadFile(signResponse.signedUrl, file);
 
   const downloadResponse = await getSignedDownloadUrl({
-    bucket: signResponse.data.bucket,
-    key: signResponse.data.key,
+    bucket: signResponse.bucket,
+    key: signResponse.key,
     expiresIn: 86400,
   });
 
-  return downloadResponse.data.signedUrl;
-};
+  return downloadResponse.signedUrl;
+  };
 
   const handleSaveEdit = async (updatedProduct) => {
+    console.time("Save Process");
   let imageUrl = panel.product.stockImageUrl;
 
   if (updatedProduct.imageFile) {
-    imageUrl = await uploadNewImage(updatedProduct.imageFile);
-    console.log("Uploaded URL:", imageUrl);
-  }
+  console.time("Image Upload");
+
+  imageUrl = await uploadNewImage(updatedProduct.imageFile);
+
+  console.timeEnd("Image Upload");
+  console.log("Uploaded URL:", imageUrl);
+}
 
   console.log("Update Payload", {
     id: panel.product.id,
@@ -1005,6 +1006,8 @@ export default function ProductCatalog() {
     },
   });
   try {
+    console.time("Update API");
+    console.log("Before updateProduct");
   await updateProduct({
     id: panel.product.id,
     payload: {
@@ -1022,6 +1025,9 @@ export default function ProductCatalog() {
       status: updatedProduct.status,
     },
   });
+  console.log("After updateProduct");
+  console.timeEnd("Update API");
+  console.timeEnd("Save Process");
 
   // Close immediately after successful update
   setPanel(null);
@@ -1072,10 +1078,16 @@ export default function ProductCatalog() {
               </button>
 
               {/* Show Archived */}
-              <button onClick={() => setShowArchived(!showArchived)}
-                className="border border-slate-300 rounded-lg px-3 py-2 text-sm">
-                {showArchived ? "Show Active Products" : "Show Archived Products"}
-              </button>
+              <button
+  onClick={() => setShowArchived(!showArchived)}
+  className="flex items-center gap-1.5 text-white font-bold text-[13px] px-[18px] py-[9px] rounded-full hover:opacity-90 transition"
+  style={{
+    background: "#FF4500",
+    boxShadow: "0 3px 10px rgba(255,69,0,0.22)",
+  }}
+>
+  {showArchived ? "Show Active Products" : "Show Archived Products"}
+</button>
               {/* ZA avatar */}
               <div
                 className="w-9 h-9 rounded-full flex items-center justify-center text-white text-[13px] font-bold cursor-pointer select-none flex-shrink-0"
@@ -1100,8 +1112,7 @@ export default function ProductCatalog() {
                 onChange={(e) => {
                   setSearch(e.target.value);
                   setPage(1);
-                }}
-              />
+                }}/>
             </div>
 
             {/* Dropdowns */}

@@ -55,14 +55,18 @@ export const useUpdateCatalogProduct = () => {
     mutationFn: updateCatalogProduct,
 
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["catalog-products"],
-      });
+  console.log("Mutation Success");
 
-      queryClient.invalidateQueries({
-        queryKey: ["catalog-product"],
-      });
-    },
+  queryClient.invalidateQueries({
+    queryKey: ["catalog-products"],
+  });
+
+  queryClient.invalidateQueries({
+    queryKey: ["catalog-product"],
+  });
+
+  console.log("Queries Invalidated");
+},
   });
 };
 

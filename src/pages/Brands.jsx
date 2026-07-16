@@ -7,6 +7,7 @@ import {
 } from "../features/catalog/hooks/useCatalog";
 
 import { useState, useEffect } from "react";
+import { uploadNewImage } from "../features/storage/utils/uploadImage";
 
 import {
   Search,
@@ -97,15 +98,26 @@ function EditBrandPanel({ brand, onClose, onSave, isPending }) {
           />
         </FormField>
 
-        <FormField label="Logo URL">
+        <FormField label="Brand Logo">
           <input
-            className={inputCls}
-            value={form.logoUrl}
-            onChange={(e) =>
-              setForm({ ...form, logoUrl: e.target.value })
-            }
-          />
+            type="file"
+            accept="image/*"
+            onChange={(e) => {
+            const file = e.target.files[0];
+
+            setForm({
+              ...form,
+              logoFile: file,
+              logoUrl: file ? URL.createObjectURL(file) : form.logoUrl,
+              });
+            }}/>
         </FormField>
+        {form.logoUrl && (
+          <img
+            src={form.logoUrl}
+            alt="Brand Logo"
+            className="w-16 h-16 mt-3 rounded-lg border object-contain"/>
+        )}
 
         <FormField label="Sort Order">
           <input
@@ -144,6 +156,8 @@ function EditBrandPanel({ brand, onClose, onSave, isPending }) {
 }
 
 export default function Brands() {
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
   const { data, isLoading, isError, error } = useBrands({
     includeDeleted: true,
   });
@@ -171,12 +185,19 @@ const updateBrand = useUpdateBrand();
 const deleteBrand = useDeleteBrand();
 const restoreBrand = useRestoreBrand();
 
-const handleSave = (form) => {
-  const payload = { ...form };
-
-  if (!payload.logoUrl) {
-    delete payload.logoUrl;
-  }
+const handleSave = async (form) => {
+  let logoUrl = form.logoUrl;
+  if (form.logoFile) {
+  logoUrl = await uploadNewImage(
+  form.logoFile,
+  "brand_logos"
+  );
+}
+  const payload = {
+  ...form,
+  logoUrl,
+  };
+  delete payload.logoFile;
 
   if (editingBrand?.id) {
     updateBrand.mutate(
@@ -250,6 +271,21 @@ const handleSave = (form) => {
   }
 
   const brands = data?.data?.items || [];
+  const filtered = brands.filter((brand) =>
+  brand.name.toLowerCase().includes(search.toLowerCase())
+);
+
+const itemsPerPage = 10;
+
+const totalPages = Math.max(
+  1,
+  Math.ceil(filtered.length / itemsPerPage)
+);
+
+const paged = filtered.slice(
+  (page - 1) * itemsPerPage,
+  page * itemsPerPage
+);
   const handleDelete = async (id) => {
   const confirmDelete = window.confirm(
     "Are you sure you want to delete this brand?"
@@ -283,125 +319,91 @@ const handleRestore = async (id) => {
     <div className="flex min-h-screen">
      <div className="flex-1 bg-slate-50 text-slate-700 p-6">
 
-
   {/* Header */}
-
   <header className="flex justify-between items-center mb-8">
-
     <div>
-
-      <div className="flex items-baseline gap-2">
-
-        <h1 className="text-2xl font-bold text-slate-900">
-          Brands 
-        </h1>
-
-      </div>
-
+      <div>
+              <h1 className="text-[22px] font-extrabold text-slate-900 m-0">Brands</h1>
+              <p className="text-[13px] text-slate-400 mt-1 m-0">
+                Create and manage brands used in the product catalog
+              </p>
+            </div>
     </div>
 
-    <div className="flex items-center gap-2">
-
+  <div className="flex items-center gap-2">
     {/* Notification */}
-  <button className="w-9 h-9 rounded-[10px] flex items-center justify-center border border-[#EBEBEB] text-base cursor-pointer relative">
-    🔔
-    <span className="absolute top-1.5 right-1.5 w-[7px] h-[7px] bg-[#FF4500] rounded-full border-[1.5px] border-white" />
-  </button>
-
-  {/* ZA Avatar */}
-  <div
-    className="w-9 h-9 rounded-full flex items-center justify-center text-white text-[13px] font-bold cursor-pointer select-none flex-shrink-0"
-    style={{ background: "#FF4500" }}
-  >
-    ZA
+    <button className="w-9 h-9 rounded-[10px] flex items-center justify-center border border-[#EBEBEB] text-base cursor-pointer relative">
+      🔔
+      <span className="absolute top-1.5 right-1.5 w-[7px] h-[7px] bg-[#FF4500] rounded-full border-[1.5px] border-white" />
+    </button>
+    {/* ZA Avatar */}
+    <div
+      className="w-9 h-9 rounded-full flex items-center justify-center text-white text-[13px] font-bold cursor-pointer select-none flex-shrink-0"
+      style={{ background: "#FF4500" }}>
+        ZA
+    </div>
   </div>
-
-</div>
-
-  </header>
+</header>
 
   {/* Search */}
-
   <div className="flex justify-between items-center mb-6">
-
-    <div className="relative w-96">
-
+    <div className="relative">
       <Search
-        className="absolute left-3 top-1/2 -translate-y-1/2 text-sky-500"
-        size={18}
-      />
-
-      <input
-        type="text"
-        placeholder="Search brands..."
-        className="w-full pl-10 pr-4 py-2 bg-white border rounded-full"
-      />
-
+        size={14}
+        className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400"/>
+        <input
+          type="text"
+          placeholder="Search brands..."
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setPage(1);
+            }}
+            className="border border-slate-200 rounded-lg py-2 pl-8 pr-3 text-[13px] w-60 text-slate-900 outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-400 transition"/>
     </div>
-
     <div className="flex items-center gap-3">
-
       <button
         onClick={() => {
           setEditingBrand(emptyBrand);
           }}
-        className="flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white px-5 py-2 rounded-full"
-      >
-        <Plus size={16} />
-        Add Brand
+          className="flex items-center gap-1.5 text-white font-bold text-[13px] px-[18px] py-[9px] rounded-full hover:opacity-90 transition"
+          style={{
+          background: "#FF4500",
+          boxShadow: "0 3px 10px rgba(255,69,0,0.22)",
+          }}>
+          <Plus size={14} />
+            Add Brand
       </button>
-
-      <span className="text-sm text-slate-400">
-        {brands.length} brands
-      </span>
-
     </div>
-
   </div>
-
   {/* Table */}
-
   <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-
     <div className="overflow-x-auto">
-
       <table className="w-full">
-
         <thead>
-
           <tr className="bg-slate-50 border-b border-slate-100 text-[11px] uppercase text-slate-400">
-
             <th className="py-3 px-6 text-left">
               Name
             </th>
-
             <th className="py-3 px-6 text-left">
               Slug
             </th>
-
             <th className="py-3 px-6 text-center">
               Logo
             </th>
-
             <th className="py-3 px-6 text-left">
               Status
             </th>
-
             <th className="py-3 px-6 text-left">
               Sort Order
             </th>
-
             <th className="py-3 px-6 text-right">
               Actions
             </th>
-
           </tr>
-
         </thead>
-
         <tbody>
-
-          {brands.length === 0 ? (
+          {filtered.length === 0 ? (
             <tr>
               <td
                 colSpan={6}
@@ -411,13 +413,12 @@ const handleRestore = async (id) => {
               </td>
             </tr>
           ) : (
-            brands.map((brand) => (
+            paged.map((brand) => (
               <tr
                 key={brand.id}
                 className={`border-b border-slate-100 hover:bg-slate-50 ${
                   brand.deletedAt ? "bg-gray-50 text-gray-400" : ""
-                }`}
-              >
+                }`}>
                 {/* Name */}
                 <td className="py-4 px-6">
                   <span className="font-medium">
@@ -511,17 +512,48 @@ const handleRestore = async (id) => {
                           ))
           )}
         </tbody>
-
       </table>
-
     </div>
-
   </div>
 
-  {/* Pagination */}
+  {/* ── Pagination ── */}
+  <div className="flex justify-between items-center mt-4 pb-2">
+    <span className="text-xs text-slate-400">
+      Showing {paged.length} of {filtered.length} brands
+    </span>
+    <div className="flex gap-1 items-center">
+    {/* Prev */}
+    <button
+      onClick={() => setPage((p) => Math.max(1, p - 1))}
+      disabled={page === 1}
+      className="border border-slate-200 rounded-lg p-1.5 text-gray-700 hover:bg-slate-50 disabled:text-slate-300 disabled:cursor-not-allowed transition"
+    >
+      <ChevronLeft size={14} />
+    </button>
 
-<div className="flex justify-end mt-4 mb-6">
-...
+    {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
+      <button
+        key={n}
+        onClick={() => setPage(n)}
+        className={`rounded-lg px-3 py-1.5 text-[13px] transition ${
+          n === page
+            ? "bg-orange-500 text-white font-bold border-none"
+            : "border border-slate-200 text-gray-700 hover:bg-slate-50"
+        }`}
+      >
+        {n}
+      </button>
+    ))}
+
+    {/* Next */}
+    <button
+      onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+      disabled={page === totalPages}
+      className="border border-slate-200 rounded-lg p-1.5 text-gray-700 hover:bg-slate-50 disabled:text-slate-300 disabled:cursor-not-allowed transition"
+    >
+      <ChevronRight size={14} />
+    </button>
+  </div>
 </div>
 
 </div>   {/* closes flex-1 */}

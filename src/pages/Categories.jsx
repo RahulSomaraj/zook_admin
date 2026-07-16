@@ -65,22 +65,17 @@ function EditCategoryPanel({
   return (
     <div className="w-full lg:w-[340px] lg:min-w-[320px] lg:max-w-[360px] lg:flex-shrink-0 bg-white border-l border-slate-100 flex flex-col overflow-y-auto max-h-screen">
       <div className="px-5 pt-6 pb-4">
-
         <div className="flex justify-between items-center mb-5">
           <h3 className="text-[15px] font-bold">
             {category.id ? "Edit Category" : "Add Category"}
           </h3>
-
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-600"
-          >
+            className="text-slate-400 hover:text-slate-600">
             ✕
           </button>
         </div>
-
         <SectionLabel>BASIC DETAILS</SectionLabel>
-
         <FormField label="Category Name">
           <input
             className={inputCls}
@@ -90,27 +85,22 @@ function EditCategoryPanel({
             }
           />
         </FormField>
-
         <FormField label="Slug">
           <input
             className={inputCls}
             value={form.slug}
             onChange={(e) =>
               setForm({ ...form, slug: e.target.value })
-            }
-          />
+            }/>
         </FormField>
-
         <FormField label="Icon">
           <input
             className={inputCls}
             value={form.icon}
             onChange={(e) =>
               setForm({ ...form, icon: e.target.value })
-            }
-          />
+            }/>
         </FormField>
-
         <FormField label="Sort Order">
           <input
             type="number"
@@ -124,20 +114,16 @@ function EditCategoryPanel({
             }
           />
         </FormField>
-
         <div className="flex justify-between mt-6">
           <button
             onClick={onClose}
-            className="border px-4 py-2 rounded-lg"
-          >
+            className="border px-4 py-2 rounded-lg">
             Cancel
           </button>
-
           <button
             onClick={() => onSave(form)}
             disabled={isPending}
-            className="bg-orange-500 text-white px-4 py-2 rounded-lg"
-          >
+            className="bg-orange-500 text-white px-4 py-2 rounded-lg">
             {isPending
               ? "Saving..."
               : category.id
@@ -145,7 +131,6 @@ function EditCategoryPanel({
               : "Create Category"}
           </button>
         </div>
-
       </div>
     </div>
   );
@@ -153,19 +138,20 @@ function EditCategoryPanel({
 
 
 export default function Categories() {
-
-const createCategory = useCreateCategory();
-const [editingCategory, setEditingCategory] = useState(null);
-const emptyCategory = {
-  id: null,
-  name: "",
-  slug: "",
-  icon: "",
-  isActive: true,
-  sortOrder: 0,
-};
-const updateCategory = useUpdateCategory();
-const handleSave = (form) => {
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const createCategory = useCreateCategory();
+  const [editingCategory, setEditingCategory] = useState(null);
+  const emptyCategory = {
+    id: null,
+    name: "",
+    slug: "",
+    icon: "",
+    isActive: true,
+    sortOrder: 0,
+  };
+  const updateCategory = useUpdateCategory();
+  const handleSave = (form) => {
   if (editingCategory?.id) {
     updateCategory.mutate({
       id: editingCategory.id,
@@ -243,36 +229,50 @@ const deleteCategory = useDeleteCategory();
   }
 
   const categories = data?.data?.items || [];
-  const handleDelete = async (id) => {
+  const filtered = categories.filter((category) =>
+  category.name.toLowerCase().includes(search.toLowerCase())
+);
+
+const itemsPerPage = 10;
+const totalPages = Math.max(
+  1,
+  Math.ceil(filtered.length / itemsPerPage)
+);
+
+const paged = filtered.slice(
+  (page - 1) * itemsPerPage,
+  page * itemsPerPage
+);
+const handleDelete = async (id) => {
   const confirmDelete = window.confirm(
     "Are you sure you want to delete this category?"
   );
 
   if (!confirmDelete) return;
-
-  try {
-    await deleteCategory.mutateAsync(id);
-    alert("Category deleted successfully.");
-  } catch (error) {
-    alert(
+    try {
+      await deleteCategory.mutateAsync(id);
+      alert("Category deleted successfully.");
+    } catch (error) {
+      alert(
       error.response?.data?.message || "Failed to delete category."
-    );
-  }
+      );
+    }
 };
 
-  return (
-    <div className="flex min-h-screen">
-  <div className="flex-1 bg-slate-50 text-slate-700 p-6">
+return (
+  <div className="flex min-h-screen">
+    <div className="flex-1 bg-slate-50 text-slate-700 p-6">
 
   {/* Header */}
   <header className="flex justify-between items-center mb-8">
 
     <div>
-      <div className="flex items-baseline gap-2">
-        <h1 className="text-2xl font-bold text-slate-900">
-          Categories 
-        </h1>
-      </div>
+      <div>
+              <h1 className="text-[22px] font-extrabold text-slate-900 m-0">Categories</h1>
+              <p className="text-[13px] text-slate-400 mt-1 m-0">
+                Create and organize product categories for consistent classification
+              </p>
+            </div>
     </div>
 
     <div className="flex items-center gap-2">
@@ -295,83 +295,72 @@ const deleteCategory = useDeleteCategory();
 
   </header>
 
-  {/* Search & Add Button */}
+{/* Search & Add Button */}
   <div className="flex justify-between items-center mb-6">
-
-    <div className="relative w-96">
-
+    <div className="relative">
       <Search
-        className="absolute left-3 top-1/2 -translate-y-1/2 text-sky-500"
-        size={18}
-      />
-
-      <input
-        type="text"
-        placeholder="Search categories..."
-        className="w-full pl-10 pr-4 py-2 bg-white border rounded-full"
-      />
-
+        size={14}
+        className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400"/>
+        <input
+          type="text"
+          placeholder="Search categories..."
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setPage(1);
+          }}
+          className="border border-slate-200 rounded-lg py-2 pl-8 pr-3 text-[13px] w-60 text-slate-900 outline-none focus:ring-2 focus:ring-orange-300 focus:border-orange-400 transition"/>
     </div>
-
-    <div className="flex items-center gap-3">
-
-      <button
-        onClick={() => {
+      <div className="flex items-center gap-3">
+        <button
+          onClick={() => {
           setEditingCategory(emptyCategory);
           }}
-          className="flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white px-5 py-2 rounded-full">
-        <Plus size={16} />
-        Add Category
-      </button>
-
-      <span className="text-sm text-slate-400">
-        {categories.length} categories
-      </span>
-
-    </div>
-
+          className="flex items-center gap-1.5 text-white font-bold text-[13px] px-[18px] py-[9px] rounded-full hover:opacity-90 transition"
+          style={{
+            background: "#FF4500",
+            boxShadow: "0 3px 10px rgba(255,69,0,0.22)",
+            }}>
+            <Plus size={14} />Add Category
+        </button>
+      </div>
   </div>
-
       <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="bg-slate-50/70 border-b border-slate-100 text-[11px] font-semibold tracking-wider uppercase text-slate-400">
-              <th className="py-3 px-6">Name</th>
-              <th className="py-3 px-6">Slug</th>
-              <th className="py-3 px-6 text-center">Icon</th>
-              <th className="py-3 px-6">Status</th>
-              <th className="py-3 px-6">Sort Order</th>
-              <th className="py-3 px-6 text-right pr-8"> Actions</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {categories.length === 0 ? (
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-slate-50/70 border-b border-slate-100 text-[11px] font-semibold tracking-wider uppercase text-slate-400">
+                <th className="py-3 px-6">Name</th>
+                <th className="py-3 px-6">Slug</th>
+                <th className="py-3 px-6 text-center">Icon</th>
+                <th className="py-3 px-6">Status</th>
+                <th className="py-3 px-6">Sort Order</th>
+                <th className="py-3 px-6 text-right pr-8"> Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.length === 0 ? (
               <tr>
                 <td
                   colSpan={6}
-                  className="px-4 py-8 text-center text-gray-500"
-                >
-                  No categories found.
+                  className="px-4 py-8 text-center text-gray-500">No categories found.
                 </td>
               </tr>
-            ) : (
-              categories.map((category) => (
+              ) : (
+              paged.map((category) => (
                 <tr
                   key={category.id}
                   className={`border-b border-slate-100 transition-colors ${
                   category.deletedAt
                   ? "bg-gray-50 text-gray-400"
                   : "hover:bg-slate-50/60"
-                  }`}
-                >
+                  }`}>
                   <td className="py-4 px-6">
                     <div className="flex items-center gap-3">
                       <div className="w-9 h-9 rounded-full bg-purple-100 border border-purple-200 flex items-center justify-center text-purple-600">
                         {category.icon ? (
                         <span className="text-sm">{category.icon}</span>
-                          ) : (
+                        ) : (
                           <Smartphone size={16} />
                           )}
                       </div>
@@ -431,36 +420,50 @@ const deleteCategory = useDeleteCategory();
                 </tr>
               ))
             )}
-          </tbody>
-        </table>
+            </tbody>
+          </table>
         </div>
       </div>
-        {/* Pagination */}
-    <div className="flex justify-end mt-6">
-      <div className="flex items-center gap-1 bg-white p-2 rounded-full border border-slate-100 shadow-sm">
+  {/* ── Pagination ── */}
+<div className="flex justify-between items-center mt-4 pb-2">
+  <span className="text-xs text-slate-400">
+    Showing {paged.length} of {filtered.length} brands
+  </span>
 
-        <button className="p-2 rounded-full hover:bg-slate-100">
-          <ChevronLeft size={16} />
-        </button>
+  <div className="flex gap-1 items-center">
+    {/* Prev */}
+    <button
+      onClick={() => setPage((p) => Math.max(1, p - 1))}
+      disabled={page === 1}
+      className="border border-slate-200 rounded-lg p-1.5 text-gray-700 hover:bg-slate-50 disabled:text-slate-300 disabled:cursor-not-allowed transition"
+    >
+      <ChevronLeft size={14} />
+    </button>
 
-        <button className="w-8 h-8 rounded-full bg-orange-600 text-white text-sm font-medium">
-          1
-        </button>
+    {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
+      <button
+        key={n}
+        onClick={() => setPage(n)}
+        className={`rounded-lg px-3 py-1.5 text-[13px] transition ${
+          n === page
+            ? "bg-orange-500 text-white font-bold border-none"
+            : "border border-slate-200 text-gray-700 hover:bg-slate-50"
+        }`}
+      >
+        {n}
+      </button>
+    ))}
 
-        <button className="w-8 h-8 rounded-full hover:bg-slate-100 text-sm">
-          2
-        </button>
-
-        <button className="w-8 h-8 rounded-full hover:bg-slate-100 text-sm">
-          3
-        </button>
-
-        <button className="p-2 rounded-full hover:bg-slate-100">
-          <ChevronRight size={16} />
-        </button>
-
-      </div>
-    </div>
+    {/* Next */}
+    <button
+      onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+      disabled={page === totalPages}
+      className="border border-slate-200 rounded-lg p-1.5 text-gray-700 hover:bg-slate-50 disabled:text-slate-300 disabled:cursor-not-allowed transition"
+    >
+      <ChevronRight size={14} />
+    </button>
+  </div>
+</div>
     </div>   {/* closes flex-1 */}
 
 {editingCategory && (
