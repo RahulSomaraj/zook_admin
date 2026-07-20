@@ -1,4 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { fetchProductById } from "../api/catalogApi";
+
 
 import {
   getCategories,
@@ -224,5 +226,13 @@ export function useCreateCatalogProduct() {
         queryKey: ["catalog-products"],
       });
     },
+  });
+}
+
+export function useProduct(id) {
+  return useQuery({
+    queryKey: ["product", id],
+    queryFn: () => fetchProductById(id),
+    enabled: Boolean(id),
   });
 }

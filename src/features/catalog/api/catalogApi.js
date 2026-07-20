@@ -94,3 +94,8 @@ export const restoreBrand = async (id) => {
   const { data } = await api.post(`/admin/brands/${id}/restore`);
   return data;
 };
+
+export async function fetchProductById(id) {
+  const { data } = await api.get(`/admin/products/${id}`);
+  return data;
+}

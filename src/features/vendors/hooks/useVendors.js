@@ -1,13 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-
 import {
   fetchVendors,
   fetchVendorById,
+  fetchVendorProducts,
   updateVendorStatus,
-  fetchVendorKycList,
-  approveVendorKyc,
-  rejectVendorKyc,
-  activateVendor,
 } from "../api/vendorsApi";
 
 import { queryKeys } from "../../../lib/queryKeys";
@@ -24,6 +20,14 @@ export function useVendor(id) {
     queryKey: queryKeys.vendors.detail(id),
     queryFn: () => fetchVendorById(id),
     enabled: Boolean(id),
+  });
+}
+
+export function useVendorProducts(vendorId) {
+  return useQuery({
+    queryKey: [...queryKeys.vendors.detail(vendorId), "products"],
+    queryFn: () => fetchVendorProducts(vendorId),
+    enabled: Boolean(vendorId),
   });
 }
 

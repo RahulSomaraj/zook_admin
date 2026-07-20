@@ -11,13 +11,25 @@ import {
   ChevronsLeft,
   ChevronsRight,
   Bell,
+  Eye,
+  Pencil,
+  Trash2,
 } from "lucide-react";
 import {
   useVendors,
   useUpdateVendorStatus,
 } from "../hooks/useVendors";
+import ViewVendorDrawer from "./ViewVendorDrawer";
+import EditVendorDrawer from "./EditVendorDrawer";
+import DeleteVendorModal from "./DeleteVendorModal";
 
 export default function VendorList() {
+  const [viewOpen, setViewOpen] = useState(false);
+  const [selectedVendor, setSelectedVendor] = useState(null);
+  const [editOpen, setEditOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [vendorToDelete, setVendorToDelete] = useState(null);
+
   const { data, isLoading, isError } = useVendors();
   const { mutate: updateStatus } = useUpdateVendorStatus();
   
@@ -292,33 +304,43 @@ export default function VendorList() {
                     </td>
                     
                     {/* Custom Action Controls */}
-                    <td className="py-3.5 px-6">
-                      <div className="flex items-center justify-center gap-1.5">
-                        <button
-                          onClick={() => handleApprove(vendor.id)}
-                          disabled={(vendor.status || "").toLowerCase() === "approved"}
-                          className={`px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all ${
-                            (vendor.status || "").toLowerCase() === "approved"
-                              ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
-                              : 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm'
-                          }`}
-                        >
-                          Approve
-                        </button>
-                        
-                        <button
-                          onClick={() => handleReject(vendor.id)}
-                          disabled={(vendor.status || "").toLowerCase() === "suspended"}
-                          className={`px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all ${
-                            (vendor.status || "").toLowerCase() === "suspended"
-                              ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
-                              : 'bg-rose-600 hover:bg-rose-700 text-white shadow-sm'
-                          }`}
-                        >
-                          Reject
-                        </button>
-                      </div>
-                    </td>
+                    <td className="py-3.5 whitespace-nowrap">
+  <div className="flex items-center gap-0.5">
+    {/* View */}
+    <button
+      title="View"
+      onClick={() => {
+        setSelectedVendor(vendor);
+        setViewOpen(true);
+      }}
+      className="p-1.5 rounded-md text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition">
+      <Eye size={15} />
+    </button>
+
+    {/* Edit */}
+    <button
+      title="Edit"
+      onClick={() => {
+        setSelectedVendor(vendor);
+        setEditOpen(true);
+      }}
+      className="p-1.5 rounded-md text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition">
+      <Pencil size={15} />
+    </button>
+
+    {/* Delete */}
+    <button
+      title="Delete"
+      onClick={() => {
+        setVendorToDelete(vendor);
+        setDeleteOpen(true);
+        }}
+      className="p-1.5 rounded-md text-red-400 hover:text-red-600 hover:bg-red-50 transition"
+    >
+      <Trash2 size={15} />
+    </button>
+  </div>
+</td>
                   </tr>
                 ))}
               </tbody>
@@ -360,7 +382,22 @@ export default function VendorList() {
           </div>
         </div>
       </div>
-
+      <ViewVendorDrawer
+        open={viewOpen}
+        onClose={() => setViewOpen(false)}
+        vendor={selectedVendor}/>
+      <EditVendorDrawer
+        open={editOpen}
+        onClose={() => setEditOpen(false)}
+        vendor={selectedVendor}/>
+      <DeleteVendorModal
+        open={deleteOpen}
+        vendor={vendorToDelete}
+        onClose={() => setDeleteOpen(false)}
+        onDelete={() => {
+          console.log("Delete Vendor:", vendorToDelete?.id);
+        setDeleteOpen(false);
+        }}/>
     </div>
   );
 }

@@ -51,3 +51,11 @@ export async function activateVendor(id) {
 
   return data;
 }
+
+export async function fetchVendorProducts(vendorId) {
+  const { data } = await api.get(
+    `/admin/vendors/${vendorId}/products`
+  );
+
+  return data;
+}
