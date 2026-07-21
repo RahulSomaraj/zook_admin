@@ -14,7 +14,6 @@ import {
   getSignedDownloadUrl,
   uploadFile,
 } from "../features/storage/api/storageApi";
-import { uploadNewImage } from "../features/storage/utils/uploadImage";
 
 import { useState, useEffect } from "react";
 import {Search,ChevronDown,Plus,Eye,Pencil,Trash2,X,Lock,ChevronLeft,ChevronRight,Bell,Archive,
@@ -964,16 +963,23 @@ export default function ProductCatalog() {
     upsert: false,
   });
 
-  await uploadFile(signResponse.signedUrl, file);
+  console.log("Sign Response:", signResponse);
+
+  await uploadFile(
+    signResponse.data.signedUrl,
+    file
+  );
 
   const downloadResponse = await getSignedDownloadUrl({
-    bucket: signResponse.bucket,
-    key: signResponse.key,
+    bucket: signResponse.data.bucket,
+    key: signResponse.data.key,
     expiresIn: 86400,
   });
 
-  return downloadResponse.signedUrl;
-  };
+  console.log("Download Response:", downloadResponse);
+
+  return downloadResponse.data.signedUrl;
+};
 
   const handleSaveEdit = async (updatedProduct) => {
     console.time("Save Process");
