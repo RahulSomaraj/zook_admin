@@ -22,6 +22,7 @@ import {
 import ViewVendorDrawer from "./ViewVendorDrawer";
 import EditVendorDrawer from "./EditVendorDrawer";
 import DeleteVendorModal from "./DeleteVendorModal";
+import { useNavigate } from "react-router-dom";
 
 export default function VendorList() {
   const [viewOpen, setViewOpen] = useState(false);
@@ -36,6 +37,8 @@ export default function VendorList() {
   const [activeTab, setActiveTab] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
+
+  const navigate = useNavigate();
 
   const vendors = data?.items || [];
 
@@ -264,7 +267,11 @@ export default function VendorList() {
               </thead>
               <tbody className="divide-y divide-slate-100 text-[13px] font-medium text-slate-700">
                 {filteredVendors.map((vendor) => (
-                  <tr key={vendor.id} className="hover:bg-slate-50/40 transition-colors">
+                  <tr key={vendor.id}
+                    onClick={() => {
+                      navigate(`/vendors/${vendor.id}`);
+                      }}
+                      className="cursor-pointer hover:bg-slate-50/40 transition-colors">
                     {/* Vendor Name & Circle Initial Badge */}
                     <td className="py-3.5 px-6">
                       <div className="flex items-center gap-3">
@@ -306,39 +313,32 @@ export default function VendorList() {
                     {/* Custom Action Controls */}
                     <td className="py-3.5 whitespace-nowrap">
   <div className="flex items-center gap-0.5">
-    {/* View */}
-    <button
-      title="View"
-      onClick={() => {
-        setSelectedVendor(vendor);
-        setViewOpen(true);
-      }}
-      className="p-1.5 rounded-md text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition">
-      <Eye size={15} />
-    </button>
 
     {/* Edit */}
     <button
-      title="Edit"
-      onClick={() => {
-        setSelectedVendor(vendor);
-        setEditOpen(true);
-      }}
-      className="p-1.5 rounded-md text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition">
-      <Pencil size={15} />
-    </button>
+  title="Edit"
+  onClick={(e) => {
+    e.stopPropagation();
+    setSelectedVendor(vendor);
+    setEditOpen(true);
+  }}
+  className="p-1.5 rounded-md text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition"
+>
+  <Pencil size={15} />
+</button>
 
     {/* Delete */}
     <button
-      title="Delete"
-      onClick={() => {
-        setVendorToDelete(vendor);
-        setDeleteOpen(true);
-        }}
-      className="p-1.5 rounded-md text-red-400 hover:text-red-600 hover:bg-red-50 transition"
-    >
-      <Trash2 size={15} />
-    </button>
+  title="Delete"
+  onClick={(e) => {
+    e.stopPropagation();
+    setVendorToDelete(vendor);
+    setDeleteOpen(true);
+  }}
+  className="p-1.5 rounded-md text-red-400 hover:text-red-600 hover:bg-red-50 transition"
+>
+  <Trash2 size={15} />
+</button>
   </div>
 </td>
                   </tr>
@@ -382,10 +382,6 @@ export default function VendorList() {
           </div>
         </div>
       </div>
-      <ViewVendorDrawer
-        open={viewOpen}
-        onClose={() => setViewOpen(false)}
-        vendor={selectedVendor}/>
       <EditVendorDrawer
         open={editOpen}
         onClose={() => setEditOpen(false)}

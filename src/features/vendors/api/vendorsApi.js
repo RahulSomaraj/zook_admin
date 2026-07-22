@@ -48,7 +48,6 @@ export async function activateVendor(id) {
   const { data } = await api.post(
     `/admin/vendors/${id}/activate`
   );
-
   return data;
 }
 
@@ -56,6 +55,10 @@ export async function fetchVendorProducts(vendorId) {
   const { data } = await api.get(
     `/admin/vendors/${vendorId}/products`
   );
-
   return data;
+}
+
+export async function updateVendor(id, payload) {
+  const { data } = await api.patch(`/admin/vendors/${id}`, payload);
+  return data.data;
 }

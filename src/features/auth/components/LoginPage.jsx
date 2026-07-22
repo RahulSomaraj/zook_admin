@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useLogin } from "../hooks/useLogin";
 import { ROUTES } from "../../../app/router/routes";
+import { Link } from "react-router-dom";
 import LoginLaptopImage from "../../../assets/images/LoginLaptopImage.png";
 import {
   FiMail,
@@ -54,21 +55,14 @@ export default function LoginPage() {
   <div className="relative w-full max-w-[420px] flex flex-col justify-center">
 
     {/* Decorative dots */}
-    <div className="absolute -top-8 right-0 grid grid-cols-4 gap-2 z-20">
-      {[...Array(12)].map((_, index) => (
-        <span
-          key={index}
-          className="w-2 h-2 rounded-full bg-orange-300"
-        />
-      ))}
-    </div>
+    
 
     <form onSubmit={handleSubmit} className="w-full mt-16">
           <h1 className="text-5xl lg:text-5xl font-extrabold tracking-tight text-gray-900">
             Welcome back!
           </h1>
           <p className="text-gray-500 text-base mt-4 mb-12 leading-7">
-            Sign in to access the admin console
+          
           </p>
 
           <label className="block mb-2 text-sm font-semibold text-gray-700">
@@ -154,16 +148,27 @@ export default function LoginPage() {
           </button>
           <div className="mt-10 flex items-center">
   <div className="flex-1 h-px bg-gray-200"></div>
-  <span className="mx-4 text-orange-400 text-sm">Need help?</span>
   <div className="flex-1 h-px bg-gray-200"></div>
 </div>
+<div className="mt-6 text-center text-xs text-gray-500 whitespace-nowrap">
+  By logging in, you accept our{" "}
+  <Link
+    to="/terms"
+    className="font-medium text-orange-500 hover:text-orange-600 hover:underline"
+  >
+    Terms of Use
+  </Link>
+  {", and "}
+  <Link
+    to="/privacy"
+    className="font-medium text-orange-500 hover:text-orange-600 hover:underline"
+  >
+    Privacy &amp; Cookies Statement
+  </Link>
+  .
+</div>
 
-<p className="text-center mt-6 text-gray-500">
-  Contact the
-  <span className="text-orange-500 font-semibold cursor-pointer ml-1">
-    ZOOK Support Team
-  </span>
-</p>
+
         </form>
         </div>
         </div>
