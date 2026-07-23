@@ -9,8 +9,19 @@ import {
   Phone,
   BadgeCheck,
 } from "lucide-react";
-import { useVendor, useVendorProducts } from "../hooks/useVendors";
+import {
+  useVendor,
+  useVendorProducts,
+  useDeleteVendor,
+  useApproveVendorProduct,
+  useRejectVendorProduct,
+} from "../hooks/useVendors";
+import Button from "../../../components/ui/Button";
+import Badge from "../../../components/ui/Badge";
+import Card from "../../../components/ui/Card";
 import { useProduct } from "../../catalog/hooks/useCatalog";
+import EditVendorDrawer from "../components/EditVendorDrawer";
+import DeleteVendorModal from "../components/DeleteVendorModal";
 
 import { useParams, useNavigate } from "react-router-dom";
 export default function VendorDetails() {
@@ -18,6 +29,11 @@ export default function VendorDetails() {
   const [selectedProductId, setSelectedProductId] = useState(null);
   const { id } = useParams();
   const navigate = useNavigate();
+  const [editOpen, setEditOpen] = useState(false);
+  const deleteVendor = useDeleteVendor();
+  const approveProduct = useApproveVendorProduct();
+  const rejectProduct = useRejectVendorProduct();
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
   const {
   data,
@@ -46,9 +62,9 @@ export default function VendorDetails() {
     if (isLoading) {
       return (
         <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-50">
-          <div className="bg-white p-6 rounded-lg">
-            Loading vendor details...
-          </div>
+          <div className="flex min-h-[60vh] items-center justify-center text-light">
+  Loading vendor details...
+</div>
         </div>
       );
     }
@@ -56,9 +72,9 @@ export default function VendorDetails() {
     if (error) {
       return (
         <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-50">
-          <div className="bg-white p-6 rounded-lg text-red-600">
-            Failed to load vendor details.
-          </div>
+          <div className="flex min-h-[60vh] items-center justify-center text-error font-semibold">
+  Failed to load vendor details.
+</div>
         </div>
       );
     }
@@ -77,7 +93,7 @@ export default function VendorDetails() {
       return "bg-green-50 text-green-700";
 
     case "pending":
-      return "bg-orange-50 text-orange-700";
+      return "bg-primary-pale text-orange-700";
 
     case "rejected":
     case "suspended":
@@ -87,25 +103,38 @@ export default function VendorDetails() {
       return "bg-gray-100 text-gray-700";
   }
 };
+const handleDelete = () => {
+  deleteVendor.mutate(id, {
+    onSuccess: () => {
+      setDeleteOpen(false);
+      navigate("/vendors");
+    },
+    onError: (error) => {
+      alert(
+        error?.response?.data?.message || "Failed to archive vendor."
+      );
+    },
+  });
+};
 
     return (
     <>
       {/* Drawer */}
-      <div className="min-h-screen bg-[#f9fafb]">
+      <div className="min-h-screen bg-surface">
 
         {/* Header */}
-        <div className="bg-white border-b border-gray-200 px-8 py-5 flex items-center justify-between">
+        <div className="flex items-center justify-between border-b border-border bg-white px-8 py-6">
 
   <div>
     <button
       onClick={() => navigate("/vendors")}
-      className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 mb-2"
+      className="mb-2 flex items-center gap-2 text-sm text-mid transition hover:text-primary"
     >
       <ArrowLeft size={16} />
       Back to Vendors
     </button>
 
-    <h2 className="text-2xl font-bold text-gray-900">
+    <h2 className="text-2xl font-bold text-black">
       Vendor Details
     </h2>
 
@@ -113,44 +142,41 @@ export default function VendorDetails() {
 
   <div className="flex items-center gap-3">
 
-    <button
-      onClick={() => {
-        // open edit page/panel
-      }}
-      className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition"
-    >
-      <Pencil size={16} />
-      Edit
-    </button>
+    <Button
+  variant="secondary"
+  onClick={() => setEditOpen(true)}
+>
+  <Pencil size={16} />
+  Edit
+</Button>
 
-    <button
-      onClick={() => {
-        // open delete confirmation
-      }}
-      className="flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 transition"
-    >
-      <Trash2 size={16} />
-      Delete
-    </button>
+    <Button
+  variant="danger"
+  onClick={() => setDeleteOpen(true)}
+>
+  <Trash2 size={16} />
+  Delete
+</Button>
 
   </div>
 </div>
 
         {/* Navigation Tabs */}
-        <div className="bg-white border-b border-gray-200 px-6 flex gap-6 overflow-x-auto shrink-0">
-          <div className="py-3 text-sm font-medium text-[#ff5500] border-b-2 border-[#ff5500] whitespace-nowrap cursor-pointer">
+        <div className="flex gap-8 overflow-x-auto border-b border-border bg-white px-8">
+          <div className="py-3 text-sm font-medium text-primary
+ border-b-2 border-primary whitespace-nowrap cursor-pointer">
             Profile
           </div>
-          <div className="py-3 text-sm font-medium text-gray-500 border-b-2 border-transparent whitespace-nowrap cursor-pointer hover:text-gray-900">
+          <div className="py-3 text-sm font-medium text-mid border-b-2 border-transparent whitespace-nowrap cursor-pointer hover:text-dark">
             KYC & Documents
           </div>
-          <div className="py-3 text-sm font-medium text-gray-500 border-b-2 border-transparent whitespace-nowrap cursor-pointer hover:text-gray-900">
+          <div className="py-3 text-sm font-medium text-mid border-b-2 border-transparent whitespace-nowrap cursor-pointer hover:text-dark">
             Products & Listings
           </div>
-          <div className="py-3 text-sm font-medium text-gray-500 border-b-2 border-transparent whitespace-nowrap cursor-pointer hover:text-gray-900">
+          <div className="py-3 text-sm font-medium text-mid border-b-2 border-transparent whitespace-nowrap cursor-pointer hover:text-dark">
             Financials
           </div>
-          <div className="py-3 text-sm font-medium text-gray-500 border-b-2 border-transparent whitespace-nowrap cursor-pointer hover:text-gray-900">
+          <div className="py-3 text-sm font-medium text-mid border-b-2 border-transparent whitespace-nowrap cursor-pointer hover:text-dark">
             Activity Log
           </div>
         </div>
@@ -159,18 +185,18 @@ export default function VendorDetails() {
         <div className="p-6 space-y-6 flex-1">
 
           {/* Vendor Profile Card */}
-          <div className="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+          <Card className="overflow-hidden">
             {/* Top Section */}
-            <div className="bg-gradient-to-r from-orange-500 to-orange-400 px-6 py-2">
+            <div className="bg-gradient-to-r from-primary to-primary-dark px-6 py-4">
               <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-xl font-bold text-orange-600 shadow-md">
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white text-xl font-bold text-primary shadow-card">
                   {vendorData?.storeName?.charAt(0)?.toUpperCase() || "V"}
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-white">
+                  <h3 className="text-2xl font-bold text-white">
                     {vendorData?.storeName || "Tech Galaxy Store"}
                   </h3>
-                  <p className="text-orange-100 text-sm">
+                  <p className="mt-1 text-sm text-white/80">
                     Owner: {vendorData?.user?.fullName}
                   </p>
                 </div>
@@ -178,24 +204,24 @@ export default function VendorDetails() {
             </div>
 
             {/* Bottom Metadata Section */}
-            <div className="p-6 space-y-4 text-sm">
+            <div className="space-y-4 p-6 text-[15px]">
               <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-                <div className="flex items-center gap-2 text-gray-500 font-medium">
-  <Store size={16} className="text-orange-500" />
+                <div className="flex items-center gap-2 text-light font-medium">
+  <Store size={16} className="text-primary" />
   <span>Store</span>
 </div>
-                <span className="font-medium text-gray-900">{vendorData?.storeName || "Test111"}</span>
+                <span className="font-medium text-dark">{vendorData?.storeName || "Test111"}</span>
               </div>
               <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-                <div className="flex items-center gap-2 text-gray-500 font-medium">
-  <User size={16} className="text-orange-500" />
+                <div className="flex items-center gap-2 text-light font-medium">
+  <User size={16} className="text-primary" />
   <span>Owner</span>
 </div>
-                <span className="font-medium text-gray-900">{vendorData?.user?.fullName}</span>
+                <span className="font-medium text-dark">{vendorData?.user?.fullName}</span>
               </div>
               <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-                <div className="flex items-center gap-2 text-gray-500 font-medium">
-  <Mail size={16} className="text-orange-500" />
+                <div className="flex items-center gap-2 text-light font-medium">
+  <Mail size={16} className="text-primary" />
   <span>Email</span>
 </div>
                 <a href={`mailto:${vendorData?.user?.email}`} className="font-medium text-blue-600 hover:underline">
@@ -203,146 +229,163 @@ export default function VendorDetails() {
                 </a>
               </div>
               <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-                <div className="flex items-center gap-2 text-gray-500 font-medium">
-  <Phone size={16} className="text-orange-500" />
+                <div className="flex items-center gap-2 text-light font-medium">
+  <Phone size={16} className="text-primary" />
   <span>Phone</span>
 </div>
                 <div className="flex items-center gap-2">
-                  <span className="font-medium text-gray-900">{vendorData?.user?.phone}</span>
+                  <span className="font-medium text-dark">{vendorData?.user?.phone}</span>
                   
                 </div>
               </div>
               <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-                <div className="flex items-center gap-2 text-gray-500 font-medium">
-  <BadgeCheck size={16} className="text-orange-500" />
-  <span>Status</span>
+                <div className="flex items-center gap-2 text-light font-medium">
+  <BadgeCheck size={16} className="text-primary" />
+  <span>KYC Status</span>
 </div>
                 <div className="flex items-center gap-2">
                   
-                  <span
-                    className={`rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${
-                      vendorData?.status === "approved" || !vendorData?.status
-                        ? "bg-green-50 text-green-700"
-                        : vendorData?.status === "pending"
-                        ? "bg-orange-50 text-orange-700"
-                        : "bg-red-50 text-red-700"
-                    }`}
-                  >
-                    {vendorData?.status || "Approved"}
-                  </span>
+                  <Badge variant={(vendorData?.status || "approved").toLowerCase()}>
+  {vendorData?.status || "Approved"}
+</Badge>
                 </div>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-gray-500 font-medium">Member Since</span>
-                <span className="font-medium text-gray-900">{vendorData?.createdAt
+                <span className="text-light font-medium">Member Since</span>
+                <span className="font-medium text-dark">{vendorData?.createdAt
   ? new Date(vendorData.createdAt).toLocaleDateString()
   : "-"}</span>
               </div>
             </div>
-          </div>
+          </Card>
 
           {/* KYC Details Card */}
-          <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+          <Card className="p-6">
             <div className="flex items-center justify-between mb-5">
-              <h3 className="text-base font-semibold text-gray-900">
+              <h3 className="text-lg font-semibold text-black">
                 KYC & Documents
               </h3>
-              <span className={`rounded-full px-3 py-1 text-xs font-semibold capitalize ${getKycStatusClass(
-                vendorData?.kyc?.[0]?.status
-                )}`}>
-                {vendorData?.kyc?.[0]?.status || "Pending"}
-              </span>
+              <Badge variant={(vendorData?.kyc?.[0]?.status || "pending").toLowerCase()}>
+  {vendorData?.kyc?.[0]?.status || "Pending"}
+</Badge>
             </div>
 
             <div className="space-y-4 text-sm">
               <div className="flex items-center justify-between border-b border-gray-100 pb-3">
                 <div>
-                  <p className="text-xs text-gray-500 font-medium">GST Number</p>
-                  <p className="font-medium text-gray-900 mt-0.5">************</p>
+                  <p className="text-xs text-light font-medium">GST Number</p>
+                  <p className="font-medium text-dark mt-0.5">************</p>
                 </div>
-                <span className="text-green-600 font-semibold text-xs flex items-center gap-1">
+                <span className="text-success font-semibold text-xs flex items-center gap-1">
                   ✓ Verified
                 </span>
               </div>
 
               <div className="flex items-center justify-between border-b border-gray-100 pb-3">
                 <div>
-                  <p className="text-xs text-gray-500 font-medium">PAN Number</p>
-                  <p className="font-medium text-gray-900 mt-0.5">************</p>
+                  <p className="text-xs text-light font-medium">PAN Number</p>
+                  <p className="font-medium text-dark mt-0.5">************</p>
                 </div>
-                <span className="text-green-600 font-semibold text-xs flex items-center gap-1">
+                <span className="text-success font-semibold text-xs flex items-center gap-1">
                   ✓ Verified
                 </span>
               </div>
 
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs text-gray-500 font-medium">Trade License</p>
-                  <p className="font-medium text-gray-900 mt-0.5">{vendorData?.kyc?.[0]?.tradeLicenseUrl
+                  <p className="text-xs text-light font-medium">Trade License</p>
+                  <p className="font-medium text-dark mt-0.5">{vendorData?.kyc?.[0]?.tradeLicenseUrl
   ? "Uploaded"
   : "Not Uploaded"}</p>
                 </div>
-                <span className="text-green-600 font-semibold text-xs flex items-center gap-1">
+                <span className="text-success font-semibold text-xs flex items-center gap-1">
                   ✓ Verified
                 </span>
               </div>
             </div>
-          </div>
+          </Card>
 
           {/* Products Card */}
-          <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+          <Card className="p-6">
             <div className="flex items-center justify-between mb-5">
               <div>
-                <h3 className="text-base font-semibold text-gray-900">
+                <h3 className="text-lg font-semibold text-black">
                   Products
                 </h3>
-                <p className="text-xs text-gray-500 mt-0.5">
+                <p className="text-xs text-light mt-0.5">
                   Products listed by this vendor
                 </p>
               </div>
 
-              <span className="rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold text-gray-700">
+              <span className="rounded-full bg-surface px-3 py-1 text-xs font-semibold text-dark">
                 {vendorData?._count?.products ?? 0} Products
               </span>
             </div>
             {products.length === 0 ? (
-  <div className="text-center py-10 text-gray-500">
-    No products found.
-  </div>
+  <div className="rounded-xl border border-dashed border-border py-12 text-center text-light">
+  No products found for this vendor.
+</div>
 ) : (
   <div className="space-y-3">
 
     {products.map((product) => (
       <div key={product.id}
         onClick={() => setSelectedProductId(product.id)}
-        className="flex items-center justify-between border rounded-xl p-4 cursor-pointer hover:bg-gray-50">
+        className="flex cursor-pointer items-center justify-between rounded-xl border border-border p-4 transition hover:bg-surface">
 
         <div>
-          <h4 className="font-semibold text-gray-900">
+          <h4 className="font-semibold text-dark">
             {product.name || product.model || "Unnamed Product"}
           </h4>
 
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-light">
             {product.category?.name || "-"}
           </p>
 
-          <p className="text-sm font-medium text-orange-600 mt-1">
+          <p className="text-sm font-medium text-primary mt-1">
             AED {product.price || "-"}
           </p>
         </div>
+        <div className="flex items-center gap-3">
+  <Badge variant={(product.status || "pending").toLowerCase()}>
+  {product.status || "Pending"}
+</Badge>
 
+  {product.status === "pending" && (
+  <>
+    <Button
+  variant="success"
+  size="sm"
+  onClick={(e) => {
+    e.stopPropagation();
+    approveProduct.mutate(product.id);
+  }}
+  disabled={approveProduct.isPending}
+>
+  {approveProduct.isPending ? "Approving..." : "Approve"}
+</Button>
 
-        <span
-          className={`px-3 py-1 rounded-full text-xs font-semibold ${
-            product.status === "approved"
-              ? "bg-green-50 text-green-700"
-              : product.status === "pending"
-              ? "bg-orange-50 text-orange-700"
-              : "bg-red-50 text-red-700"
-          }`}
-        >
-          {product.status || "Pending"}
-        </span>
+    <Button
+  variant="danger"
+  size="sm"
+  onClick={(e) => {
+    e.stopPropagation();
+
+    const reason = prompt("Enter rejection reason:");
+    if (!reason) return;
+
+    rejectProduct.mutate({
+      productId: product.id,
+      reason,
+    });
+  }}
+  disabled={rejectProduct.isPending}
+>
+  {rejectProduct.isPending ? "Rejecting..." : "Reject"}
+</Button>
+  </>
+)}
+</div>
 
       </div>
     ))}
@@ -351,51 +394,51 @@ export default function VendorDetails() {
 {/* Product Details */}
 
 {productLoading && (
-  <div className="text-sm text-gray-500 mt-4">
+  <div className="text-sm text-light mt-4">
     Loading product details...
   </div>
 )}
 
 
 {productDetails?.data && (
-  <div className="mt-5 rounded-xl border border-gray-200 bg-gray-50 p-5">
+  <Card className="mt-5 bg-surface p-5">
 
-    <h4 className="font-semibold text-gray-900 mb-3">
+    <h4 className="font-semibold text-dark mb-3">
       Product Details
     </h4>
 
     <div className="space-y-2 text-sm">
 
       <p>
-        <span className="text-gray-500">
+        <span className="text-light">
           Name:
         </span>{" "}
         {productDetails.data.name || "-"}
       </p>
 
       <p>
-        <span className="text-gray-500">
+        <span className="text-light">
           Model:
         </span>{" "}
         {productDetails.data.model || "-"}
       </p>
 
       <p>
-        <span className="text-gray-500">
+        <span className="text-light">
           Price:
         </span>{" "}
         AED {productDetails.data.price || "-"}
       </p>
 
       <p>
-  <span className="text-gray-500">
+  <span className="text-light">
     Condition:
   </span>{" "}
   {productDetails.data.conditionGrade || "-"}
 </p>
 
       <p>
-        <span className="text-gray-500">
+        <span className="text-light">
           Status:
         </span>{" "}
         {productDetails.data.status || "-"}
@@ -403,12 +446,21 @@ export default function VendorDetails() {
 
     </div>
 
-  </div>
+  </Card>
 )}
-          </div>
+          </Card>
 
         </div>
-
+          <EditVendorDrawer
+            open={editOpen}
+            onClose={() => setEditOpen(false)}
+            vendor={vendorData}/>
+          <DeleteVendorModal
+  open={deleteOpen}
+  vendor={vendorData}
+  onClose={() => setDeleteOpen(false)}
+  onDelete={handleDelete}
+/>
       </div>
     </>
   );

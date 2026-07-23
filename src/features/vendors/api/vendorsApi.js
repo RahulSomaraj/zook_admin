@@ -62,3 +62,27 @@ export async function updateVendor(id, payload) {
   const { data } = await api.patch(`/admin/vendors/${id}`, payload);
   return data.data;
 }
+
+export async function deleteVendor(id) {
+  const { data } = await api.delete(`/admin/vendors/${id}`);
+  return data;
+}
+
+export async function approveVendorProduct(productId) {
+  const { data } = await api.post(
+    `/admin/products/${productId}/approve`
+  );
+
+  return data;
+}
+
+export async function rejectVendorProduct(productId, reason) {
+  const { data } = await api.post(
+    `/admin/products/${productId}/reject`,
+    {
+      reason,
+    }
+  );
+
+  return data;
+}

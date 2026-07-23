@@ -1,1 +1,71 @@
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Montserrat:wght@900&display=swap");
+
 @import "tailwindcss";
+
+@theme {
+  /* ==========================
+     Fonts
+  ========================== */
+
+  --font-sans: "Manrope", sans-serif;
+  --font-brand: "Montserrat", sans-serif;
+
+  /* ==========================
+     Brand Colors
+  ========================== */
+
+  --color-primary: #FF4500;
+  --color-primary-dark: #CC3700;
+  --color-primary-light: #FF6B35;
+  --color-primary-pale: #FFF0EB;
+
+  /* ==========================
+     Neutral Colors
+  ========================== */
+
+  --color-black: #0A0A0A;
+  --color-dark: #1A1A1A;
+  --color-charcoal: #333333;
+  --color-mid: #666666;
+  --color-light: #999999;
+  --color-border: #E5E5E5;
+  --color-surface: #F7F7F5;
+  --color-white: #FFFFFF;
+
+  /* ==========================
+     Semantic Colors
+  ========================== */
+
+  --color-success: #22C55E;
+  --color-warning: #F59E0B;
+  --color-error: #EF4444;
+  --color-info: #3B82F6;
+
+  /* ==========================
+     Radius
+  ========================== */
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-full: 9999px;
+
+  /* ==========================
+     Shadows
+  ========================== */
+
+  --shadow-card: 0 4px 12px rgba(0,0,0,.08);
+  --shadow-hover: 0 8px 24px rgba(0,0,0,.10);
+  --shadow-primary: 0 4px 16px rgba(255,69,0,.24);
+}
+
+/* ==========================
+   Base Styles
+========================== */
+
+body {
+  font-family: var(--font-sans);
+  background: var(--color-surface);
+  color: var(--color-charcoal);
+}

@@ -1,11 +1,29 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { X } from "lucide-react";
+import { useUpdateVendor } from "../hooks/useVendors";
 
 export default function EditVendorDrawer({
   open,
   onClose,
   vendor,
-}) {
+})
+ {
+  const [formData, setFormData] = useState({
+  storeName: "",
+  storeAddress: "",
+  commissionRate: "",
+});
+
+const { mutate: updateVendor, isPending } = useUpdateVendor();
+useEffect(() => {
+  if (vendor) {
+    setFormData({
+      storeName: vendor.storeName || "",
+      storeAddress: vendor.storeAddress || "",
+      commissionRate: vendor.commissionRate || "",
+    });
+  }
+}, [vendor]);
   if (!open) return null;
 
   return (
@@ -82,42 +100,55 @@ export default function EditVendorDrawer({
                 </label>
                 <input
                   type="text"
-                  defaultValue={vendor?.storeName}
+                  value={formData.storeName}
+onChange={(e) =>
+  setFormData({
+    ...formData,
+    storeName: e.target.value,
+  })
+}
                   className="w-full rounded-xl border border-gray-200 bg-gray-50/50 px-3.5 py-2.5 text-sm text-gray-900 focus:bg-white focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none transition"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
-                  Owner Name
-                </label>
-                <input
-                  type="text"
-                  defaultValue={vendor?.ownerName}
-                  className="w-full rounded-xl border border-gray-200 bg-gray-50/50 px-3.5 py-2.5 text-sm text-gray-900 focus:bg-white focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none transition"
-                />
+  Store Address
+</label>
+
+<input
+  type="text"
+  value={formData.storeAddress}
+onChange={(e) =>
+  setFormData({
+    ...formData,
+    storeAddress: e.target.value,
+  })
+}
+  className="w-full rounded-xl border border-gray-200 bg-gray-50/50 px-3.5 py-2.5 text-sm text-gray-900 focus:bg-white focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none transition"
+/>
               </div>
 
               <div>
                 <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
-                  Email Address
-                </label>
-                <input
-                  type="text"
-                  defaultValue={vendor?.email}
-                  className="w-full rounded-xl border border-gray-200 bg-gray-50/50 px-3.5 py-2.5 text-sm text-gray-900 focus:bg-white focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none transition"
-                />
+  Commission Rate (%)
+</label>
+
+<input
+  type="number"
+  value={formData.commissionRate}
+onChange={(e) =>
+  setFormData({
+    ...formData,
+    commissionRate: e.target.value,
+  })
+}
+  className="w-full rounded-xl border border-gray-200 bg-gray-50/50 px-3.5 py-2.5 text-sm text-gray-900 focus:bg-white focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none transition"
+/>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
-                  Phone Number
-                </label>
-                <input
-                  type="text"
-                  defaultValue={vendor?.phone}
-                  className="w-full rounded-xl border border-gray-200 bg-gray-50/50 px-3.5 py-2.5 text-sm text-gray-900 focus:bg-white focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none transition"
-                />
+                
               </div>
 
               <div className="flex items-center justify-between pt-2 border-t border-gray-100">
@@ -176,10 +207,32 @@ export default function EditVendorDrawer({
               Cancel
             </button>
             <button
-              onClick={onClose}
+              disabled={isPending}
+              onClick={() => {
+  updateVendor(
+    {
+      id: vendor.id,
+      payload: {
+        storeName: formData.storeName,
+        storeAddress: formData.storeAddress,
+        commissionRate: Number(formData.commissionRate),
+      },
+    },
+    {
+      onSuccess: () => {
+        alert("Vendor updated successfully!");
+        onClose();
+      },
+      onError: (error) => {
+        console.error(error);
+        alert("Failed to update vendor.");
+      },
+    }
+  );
+}}
               className="rounded-xl bg-[#ff5500] px-5 py-2.5 text-sm font-medium text-white hover:bg-[#e04c00] transition shadow-sm"
             >
-              Save Changes
+              {isPending ? "Saving..." : "Save Changes"}
             </button>
           </div>
 

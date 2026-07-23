@@ -9,6 +9,9 @@ import {
   activateVendor,
   fetchVendorProducts,
   updateVendor,
+  deleteVendor,
+  approveVendorProduct,
+  rejectVendorProduct,
 } from "../api/vendorsApi";
 
 import { queryKeys } from "../../../lib/queryKeys";
@@ -115,6 +118,48 @@ export function useUpdateVendor() {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.vendors.all,
+      });
+    },
+  });
+}
+
+export function useDeleteVendor() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: deleteVendor,
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.vendors.all,
+      });
+    },
+  });
+}
+
+export function useApproveVendorProduct() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: approveVendorProduct,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+      predicate: (query) => query.queryKey.includes("products"),
+      });
+    },
+  });
+}
+
+export function useRejectVendorProduct() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ productId, reason }) =>
+      rejectVendorProduct(productId, reason),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+      predicate: (query) => query.queryKey.includes("products"),
       });
     },
   });
