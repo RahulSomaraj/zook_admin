@@ -38,7 +38,7 @@ export default function AppRouter() {
           </ProtectedRoute>
         }
       >
-        <Route index element={<Navigate to={ROUTES.productCatalog} replace />} />
+        <Route index element={<Navigate to={ROUTES.overview} replace />} />
         <Route path={ROUTES.dashboard} element={<Overview />} />
         <Route path={ROUTES.overview} element={<Overview />} />
         <Route path={ROUTES.productCatalog} element={<ProductCatalog />} />

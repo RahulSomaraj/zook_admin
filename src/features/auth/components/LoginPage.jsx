@@ -26,15 +26,20 @@ export default function LoginPage() {
 
   const login = useLogin();
   const navigate = useNavigate();
-  const location = useLocation();
-  const from = location.state?.from?.pathname || ROUTES.productCatalog;
+  const from = ROUTES.overview;
 
   const handleSubmit = (e) => {
     e.preventDefault();
     login.mutate(
-      { email, password },
-      { onSuccess: () => navigate(from, { replace: true }) }
-    );
+  { email, password },
+  {
+    onSuccess: (data) => {
+      console.log("Login Success:", data);
+      console.log("Redirecting to:", from);
+      navigate(from, { replace: true });
+    },
+  }
+);
   };
 
   return (

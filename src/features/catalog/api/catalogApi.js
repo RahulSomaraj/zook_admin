@@ -10,8 +10,17 @@ export const getCatalogProducts = async (params = {}) => {
 };
 
 export const createCatalogProduct = async (payload) => {
-  const { data } = await api.post("/admin/catalog", payload);
-  return data;
+  try {
+    const { data } = await api.post("/admin/catalog", payload);
+    return data;
+  } catch (error) {
+    console.log("Backend Error:", error.response?.data);
+
+    // 👇 add this line
+    console.log("Validation Messages:", error.response?.data?.message);
+
+    throw error;
+  }
 };
 
 export const getCatalogProduct = async (id) => {

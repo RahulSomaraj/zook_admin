@@ -5,7 +5,7 @@ export default function MainLayout({ children }) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen bg-[#0d0e12]">
+    <div className="flex h-screen overflow-hidden bg-[#0d0e12]">
       <Sidebar mobileOpen={mobileOpen} onClose={() => setMobileOpen(false)} />
 
       <div className="flex-1 flex flex-col min-w-0 bg-white">
@@ -31,7 +31,7 @@ export default function MainLayout({ children }) {
           </div>
         </header>
 
-        <main className="flex-1 overflow-x-hidden bg-white">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden bg-white">
           {children}
         </main>
       </div>

@@ -298,7 +298,7 @@ function EditProductPanel({product,onClose,onSave,brands,categories,}) {
   const set = (key, val) => setForm((f) => ({ ...f, [key]: val }));
 
   return (
-    <div className="w-full lg:w-[340px] lg:min-w-[320px] lg:max-w-[360px] lg:flex-shrink-0 bg-white border-l border-slate-100 flex flex-col overflow-y-auto max-h-screen">
+    <div className="w-full lg:w-[500px] lg:min-w-[500px] lg:max-w-[500px] lg:flex-shrink-0 bg-white border-l border-slate-100 flex flex-col overflow-y-auto max-h-screen">
       <div className="px-5 pt-6 pb-4">
         {/* Header */}
         <div className="flex justify-between items-center mb-5">
@@ -569,7 +569,11 @@ console.log("Download URL:", downloadResponse);
 };
 
   const handleCreate = async (status) => {
-  const imageUrl = await handleImageUpload();
+  let imageUrl = await handleImageUpload();
+
+if (!imageUrl) {
+  imageUrl = null;
+}
     console.log({
       brandId: form.brand,
       categoryId: form.category,
@@ -593,7 +597,7 @@ console.log("Download URL:", downloadResponse);
       categoryId: form.category,
       model: form.model,
       year: Number(form.year),
-      stockImageUrl: imageUrl,
+      ...(imageUrl ? { stockImageUrl: imageUrl } : {}),
       specs: {
         storage: form.variants,
         colors: form.colours,
@@ -611,7 +615,7 @@ console.log("Download URL:", downloadResponse);
   };
 
   return (
-    <div className="w-full lg:w-[340px] lg:min-w-[320px] lg:max-w-[360px] lg:flex-shrink-0 bg-white border-l border-slate-100 flex flex-col overflow-y-auto max-h-screen">
+    <div className="w-full lg:w-[500px] lg:min-w-[500px] lg:max-w-[500px] lg:flex-shrink-0 bg-white border-l border-slate-100 flex flex-col overflow-y-auto max-h-screen">
       <div className="px-5 pt-6 pb-4">
         {/* Header */}
         <div className="flex justify-between items-center mb-5">
@@ -839,24 +843,22 @@ console.log("Download URL:", downloadResponse);
         </div>
 
         {/* Actions */}
-        <div className="flex justify-between items-center gap-2">
-          <button
-            onClick={onClose}
-            className="border border-slate-200 text-gray-700 font-semibold text-[13px] px-4 py-2 rounded-lg hover:bg-slate-50 transition"
-          >
-            Discard
-          </button>
-          <div className="flex gap-2">
-            <button onClick={() => handleCreate("draft")}
-              disabled={isPending}>Save as draft
-            </button>
+        <div className="flex justify-end gap-3 mt-5 border-t border-slate-200 pt-4">
+  <button
+    onClick={onClose}
+    className="h-10 px-5 rounded-lg border border-slate-300 bg-white text-slate-700 text-sm font-medium hover:bg-slate-50 transition"
+  >
+    Discard
+  </button>
 
-            <button onClick={() => handleCreate("active")}
-              disabled={isPending}>
-                {isPending ? "Saving..." : "✓ Add to catalog"}
-            </button>
-          </div>
-        </div>
+  <button
+    onClick={() => handleCreate("active")}
+    disabled={isPending}
+    className="h-10 px-5 rounded-lg bg-orange-500 text-white text-sm font-medium hover:bg-orange-600 transition disabled:opacity-60"
+  >
+    {isPending ? "Saving..." : "Add to Catalog"}
+  </button>
+</div>
       </div>
     </div>
   );

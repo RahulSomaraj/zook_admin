@@ -138,7 +138,7 @@ const handleLogout = async () => {
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-2 pb-4 overflow-y-auto">
+      <nav className="flex-1 px-2 pb-4 overflow-y-auto no-scrollbar">
         {navSections.map((section) => (
           <div key={section.label} className="mb-2">
             {/* Section label */}
