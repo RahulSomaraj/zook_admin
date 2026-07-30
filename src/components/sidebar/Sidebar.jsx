@@ -53,6 +53,12 @@ const navSections = [
         label: "Brands",
         path: "/brands",
       },
+      {
+        id: "add-new-item",
+        icon: "➕",
+        label: "Add New Item",
+        path: "/variants",
+      },
     ],
   },
 
@@ -72,7 +78,11 @@ const navSections = [
   },
 ];
 
-export default function Sidebar({ mobileOpen = false, onClose = () => {} }) {
+export default function Sidebar({
+  mobileOpen = false,
+  onClose = () => {},
+  onAddNewItem = () => {},
+}) {
   const clearAuth = useAuthStore((s) => s.clearAuth);
 const navigate = useNavigate();
 
@@ -147,32 +157,54 @@ const handleLogout = async () => {
             </p>
 
             {/* Items */}
-            {section.items.map((item) => (
-              <NavLink
-                key={item.id}
-                to={item.path}
-                onClick={onClose}
-                className={({ isActive }) => `
-                  w-full flex items-center gap-3 px-3 py-2.5 rounded-md mb-0.5
-                  text-sm font-medium transition-all duration-150 relative
-                  ${
-                    isActive
-                      ? "bg-[#1e1f26] text-orange-600 border-l-[3px] border-orange-500 pl-[9px]"
-                      : "text-gray-300 border-l-[3px] border-transparent hover:bg-white/5 hover:text-white"
-                  }
-                `}
-              >
-                <span className="text-base leading-none">{item.icon}</span>
-                <span className="flex-1 text-left">{item.label}</span>
-                {item.badge && (
-                  <span
-                    className={`text-[11px] font-bold min-w-[20px] h-5 px-1.5 rounded-full flex items-center justify-center ${item.badgeColor}`}
-                  >
-                    {item.badge}
-                  </span>
-                )}
-              </NavLink>
-            ))}
+            {section.items.map((item) => {
+  // Special case for Add New Item
+  if (item.id === "add-new-item") {
+    return (
+      <button
+        key={item.id}
+        type="button"
+        onClick={() => {
+          onAddNewItem();
+          onClose();
+        }}
+        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-md mb-0.5 text-sm font-medium text-gray-300 border-l-[3px] border-transparent hover:bg-white/5 hover:text-white transition-all duration-150"
+      >
+        <span className="text-base leading-none">{item.icon}</span>
+        <span className="flex-1 text-left">{item.label}</span>
+      </button>
+    );
+  }
+
+  // All other menu items
+  return (
+    <NavLink
+      key={item.id}
+      to={item.path}
+      onClick={onClose}
+      className={({ isActive }) => `
+        w-full flex items-center gap-3 px-3 py-2.5 rounded-md mb-0.5
+        text-sm font-medium transition-all duration-150 relative
+        ${
+          isActive
+            ? "bg-[#1e1f26] text-orange-600 border-l-[3px] border-orange-500 pl-[9px]"
+            : "text-gray-300 border-l-[3px] border-transparent hover:bg-white/5 hover:text-white"
+        }
+      `}
+    >
+      <span className="text-base leading-none">{item.icon}</span>
+      <span className="flex-1 text-left">{item.label}</span>
+
+      {item.badge && (
+        <span
+          className={`text-[11px] font-bold min-w-[20px] h-5 px-1.5 rounded-full flex items-center justify-center ${item.badgeColor}`}
+        >
+          {item.badge}
+        </span>
+      )}
+    </NavLink>
+  );
+})}
           </div>
         ))}
       </nav>

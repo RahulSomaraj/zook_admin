@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
+import { ROUTES } from "../../../app/router/routes";
 import {
   ArrowLeft,
   Pencil,
@@ -8,6 +9,9 @@ import {
   Mail,
   Phone,
   BadgeCheck,
+  FileText,
+  Building2,
+  IdCard,
 } from "lucide-react";
 import {
   useVendor,
@@ -34,6 +38,16 @@ export default function VendorDetails() {
   const approveProduct = useApproveVendorProduct();
   const rejectProduct = useRejectVendorProduct();
   const [deleteOpen, setDeleteOpen] = useState(false);
+
+  const profileRef = useRef(null);
+  const kycRef = useRef(null);
+  const productsRef = useRef(null);
+  const scrollToSection = (ref) => {
+  ref.current?.scrollIntoView({
+    behavior: "smooth",
+    block: "start",
+  });
+};
 
   const {
   data,
@@ -123,34 +137,38 @@ const handleDelete = () => {
       <div className="min-h-screen bg-surface">
 
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-border bg-white px-8 py-6">
+        <div className="sticky top-0 z-40 flex items-start justify-between border-b border-border bg-white px-8 py-6 shadow-sm">
 
   <div>
     <button
-      onClick={() => navigate("/vendors")}
-      className="mb-2 flex items-center gap-2 text-sm text-mid transition hover:text-primary"
-    >
-      <ArrowLeft size={16} />
-      Back to Vendors
-    </button>
+  onClick={() => navigate(ROUTES.allVendors)}
+  className="inline-flex items-center gap-2 rounded-full border border-border bg-white px-1 py-1.5 text-xs font-semibold text-mid shadow-sm transition-all duration-200 hover:border-primary hover:bg-primary-pale hover:text-primary"
+>
+  <ArrowLeft size={15} />
+  Back to Vendors
+</button>
 
-    <h2 className="text-2xl font-bold text-black">
-      Vendor Details
-    </h2>
+    <div className="mt-3">
+  <h1 className="text-2xl font-bold text-black">
+    Vendor Details
+  </h1>
+</div>
 
   </div>
 
-  <div className="flex items-center gap-3">
+  <div className="flex items-center gap-2">
 
     <Button
+  size="sm"
   variant="secondary"
   onClick={() => setEditOpen(true)}
 >
-  <Pencil size={16} />
+  <Pencil size={15} />
   Edit
 </Button>
 
     <Button
+  size="sm"
   variant="danger"
   onClick={() => setDeleteOpen(true)}
 >
@@ -162,22 +180,20 @@ const handleDelete = () => {
 </div>
 
         {/* Navigation Tabs */}
-        <div className="flex gap-8 overflow-x-auto border-b border-border bg-white px-8">
-          <div className="py-3 text-sm font-medium text-primary
- border-b-2 border-primary whitespace-nowrap cursor-pointer">
-            Profile
-          </div>
-          <div className="py-3 text-sm font-medium text-mid border-b-2 border-transparent whitespace-nowrap cursor-pointer hover:text-dark">
-            KYC & Documents
-          </div>
-          <div className="py-3 text-sm font-medium text-mid border-b-2 border-transparent whitespace-nowrap cursor-pointer hover:text-dark">
+        <div className="sticky top-0 z-30 flex gap-8 overflow-x-auto border-b border-border bg-white px-8 shadow-sm">
+          <div
+  onClick={() => scrollToSection(profileRef)}
+  className="py-3 text-sm font-medium text-primary border-b-2 border-primary whitespace-nowrap cursor-pointer">
+  Profile
+</div>
+          <div
+  onClick={() => scrollToSection(kycRef)}
+  className="py-3 text-sm font-medium text-mid border-b-2 border-transparent whitespace-nowrap cursor-pointer hover:text-dark">
+  KYC & Documents
+</div>
+          <div onClick={() => scrollToSection(productsRef)} 
+            className="py-3 text-sm font-medium text-mid border-b-2 border-transparent whitespace-nowrap cursor-pointer hover:text-dark">
             Products & Listings
-          </div>
-          <div className="py-3 text-sm font-medium text-mid border-b-2 border-transparent whitespace-nowrap cursor-pointer hover:text-dark">
-            Financials
-          </div>
-          <div className="py-3 text-sm font-medium text-mid border-b-2 border-transparent whitespace-nowrap cursor-pointer hover:text-dark">
-            Activity Log
           </div>
         </div>
 
@@ -185,18 +201,19 @@ const handleDelete = () => {
         <div className="p-6 space-y-6 flex-1">
 
           {/* Vendor Profile Card */}
+          <div ref={profileRef}>
           <Card className="overflow-hidden">
             {/* Top Section */}
-            <div className="bg-gradient-to-r from-primary to-primary-dark px-6 py-4">
+            <div className="border-b border-border bg-white px-6 py-2">
               <div className="flex items-center gap-4">
-                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white text-xl font-bold text-primary shadow-card">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-pale text-xl font-bold text-primary">
                   {vendorData?.storeName?.charAt(0)?.toUpperCase() || "V"}
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold text-white">
+                  <h3 className="text-1.5xl font-bold text-black">
                     {vendorData?.storeName || "Tech Galaxy Store"}
                   </h3>
-                  <p className="mt-1 text-sm text-white/80">
+                  <p className="mt-1 text-xs text-light">
                     Owner: {vendorData?.user?.fullName}
                   </p>
                 </div>
@@ -208,21 +225,27 @@ const handleDelete = () => {
               <div className="flex items-center justify-between border-b border-gray-100 pb-3">
                 <div className="flex items-center gap-2 text-light font-medium">
   <Store size={16} className="text-primary" />
-  <span>Store</span>
+  <span className="text-sm font-medium">
+Store
+</span>
 </div>
                 <span className="font-medium text-dark">{vendorData?.storeName || "Test111"}</span>
               </div>
               <div className="flex items-center justify-between border-b border-gray-100 pb-3">
                 <div className="flex items-center gap-2 text-light font-medium">
   <User size={16} className="text-primary" />
-  <span>Owner</span>
+  <span className="text-sm font-medium">
+Owner
+</span>
 </div>
                 <span className="font-medium text-dark">{vendorData?.user?.fullName}</span>
               </div>
               <div className="flex items-center justify-between border-b border-gray-100 pb-3">
                 <div className="flex items-center gap-2 text-light font-medium">
   <Mail size={16} className="text-primary" />
-  <span>Email</span>
+  <span className="text-sm font-medium">
+Email
+</span>
 </div>
                 <a href={`mailto:${vendorData?.user?.email}`} className="font-medium text-blue-600 hover:underline">
                   {vendorData?.user?.email}
@@ -231,7 +254,8 @@ const handleDelete = () => {
               <div className="flex items-center justify-between border-b border-gray-100 pb-3">
                 <div className="flex items-center gap-2 text-light font-medium">
   <Phone size={16} className="text-primary" />
-  <span>Phone</span>
+  <span className="text-sm font-medium">
+Phone</span>
 </div>
                 <div className="flex items-center gap-2">
                   <span className="font-medium text-dark">{vendorData?.user?.phone}</span>
@@ -241,7 +265,8 @@ const handleDelete = () => {
               <div className="flex items-center justify-between border-b border-gray-100 pb-3">
                 <div className="flex items-center gap-2 text-light font-medium">
   <BadgeCheck size={16} className="text-primary" />
-  <span>KYC Status</span>
+  <span className="text-sm font-medium">
+KYC Status</span>
 </div>
                 <div className="flex items-center gap-2">
                   
@@ -258,63 +283,101 @@ const handleDelete = () => {
               </div>
             </div>
           </Card>
+          </div>
 
           {/* KYC Details Card */}
+          <div ref={kycRef}>
           <Card className="p-6">
-            <div className="flex items-center justify-between mb-5">
-              <h3 className="text-lg font-semibold text-black">
-                KYC & Documents
-              </h3>
-              <Badge variant={(vendorData?.kyc?.[0]?.status || "pending").toLowerCase()}>
-  {vendorData?.kyc?.[0]?.status || "Pending"}
-</Badge>
-            </div>
+            <div className="mb-6 flex items-start justify-between">
+  <div>
+    <h3 className="text-xl font-semibold text-black">
+      KYC & Documents
+    </h3>
+  </div>
+
+  <Badge
+    variant={(vendorData?.kyc?.[0]?.status || "pending").toLowerCase()}
+  >
+    {vendorData?.kyc?.[0]?.status || "Pending"}
+  </Badge>
+</div>
 
             <div className="space-y-4 text-sm">
               <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-                <div>
-                  <p className="text-xs text-light font-medium">GST Number</p>
-                  <p className="font-medium text-dark mt-0.5">************</p>
-                </div>
-                <span className="text-success font-semibold text-xs flex items-center gap-1">
-                  ✓ Verified
-                </span>
+                <div className="flex items-center gap-3">
+  <Building2 size={18} className="text-primary" />
+
+  <div>
+    <p className="text-sm font-medium text-dark">
+      GST Number
+    </p>
+
+    <p className="mt-1 text-sm text-light">
+      ************
+    </p>
+  </div>
+</div>
+                <Badge variant="approved">
+  Verified
+</Badge>
               </div>
 
-              <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-                <div>
-                  <p className="text-xs text-light font-medium">PAN Number</p>
-                  <p className="font-medium text-dark mt-0.5">************</p>
-                </div>
-                <span className="text-success font-semibold text-xs flex items-center gap-1">
-                  ✓ Verified
-                </span>
-              </div>
+              <div className="flex items-center justify-between border-b border-border py-4">
+  <div className="flex items-center gap-3">
+    <IdCard size={18} className="text-primary" />
 
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-xs text-light font-medium">Trade License</p>
-                  <p className="font-medium text-dark mt-0.5">{vendorData?.kyc?.[0]?.tradeLicenseUrl
-  ? "Uploaded"
-  : "Not Uploaded"}</p>
-                </div>
-                <span className="text-success font-semibold text-xs flex items-center gap-1">
-                  ✓ Verified
-                </span>
-              </div>
+    <div>
+      <p className="text-sm font-medium text-dark">
+        PAN Number
+      </p>
+
+      <p className="mt-1 text-sm text-light">
+        ************
+      </p>
+    </div>
+  </div>
+
+  <Badge variant="approved">
+    Verified
+  </Badge>
+</div>
+
+              <div className="flex items-center gap-3">
+  <FileText size={18} className="text-primary" />
+
+  <div>
+    <p className="text-sm font-medium text-dark">
+      Trade License
+    </p>
+
+    <p className="mt-1 text-sm text-light">
+      {vendorData?.kyc?.[0]?.tradeLicenseUrl
+        ? "Uploaded"
+        : "Not Uploaded"}
+    </p>
+  </div>
+</div>
+
+<Badge
+  variant={vendorData?.kyc?.[0]?.tradeLicenseUrl ? "approved" : "pending"}>
+  {vendorData?.kyc?.[0]?.tradeLicenseUrl ? "Verified" : "Not Uploaded"}
+</Badge>
             </div>
           </Card>
+          </div>
 
           {/* Products Card */}
+          <div ref={productsRef}>
           <Card className="p-6">
             <div className="flex items-center justify-between mb-5">
               <div>
-                <h3 className="text-lg font-semibold text-black">
-                  Products
-                </h3>
-                <p className="text-xs text-light mt-0.5">
-                  Products listed by this vendor
-                </p>
+                <h3 className="text-xl font-semibold text-black">
+  Products & Listings
+</h3>
+
+<p className="mt-1 text-sm text-light">
+  Review and manage all products submitted by this vendor.
+</p>
               </div>
 
               <span className="rounded-full bg-surface px-3 py-1 text-xs font-semibold text-dark">
@@ -329,24 +392,26 @@ const handleDelete = () => {
   <div className="space-y-3">
 
     {products.map((product) => (
-      <div key={product.id}
-        onClick={() => setSelectedProductId(product.id)}
-        className="flex cursor-pointer items-center justify-between rounded-xl border border-border p-4 transition hover:bg-surface">
+      <div
+  key={product.id}
+  onClick={() => setSelectedProductId(product.id)}
+  className="flex cursor-pointer items-center justify-between rounded-2xl border border-border bg-white px-5 py-4 transition-all duration-200 hover:border-primary hover:shadow-md"
+>
 
         <div>
-          <h4 className="font-semibold text-dark">
+          <h4 className="text-base font-semibold text-black">
             {product.name || product.model || "Unnamed Product"}
           </h4>
 
-          <p className="text-sm text-light">
+          <p className="mt-1 text-sm text-light">
             {product.category?.name || "-"}
           </p>
 
-          <p className="text-sm font-medium text-primary mt-1">
+          <p className="mt-2 text-sm font-semibold text-primary">
             AED {product.price || "-"}
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
   <Badge variant={(product.status || "pending").toLowerCase()}>
   {product.status || "Pending"}
 </Badge>
@@ -401,54 +466,76 @@ const handleDelete = () => {
 
 
 {productDetails?.data && (
-  <Card className="mt-5 bg-surface p-5">
+  <Card className="mt-5 border border-border bg-white p-6">
 
-    <h4 className="font-semibold text-dark mb-3">
-      Product Details
-    </h4>
+    <div className="mb-5">
+  <h4 className="text-lg font-semibold text-black">
+    Product Details
+  </h4>
+
+  <p className="mt-1 text-sm text-light">
+    Detailed information about the selected product.
+  </p>
+</div>
 
     <div className="space-y-2 text-sm">
 
-      <p>
-        <span className="text-light">
-          Name:
-        </span>{" "}
-        {productDetails.data.name || "-"}
-      </p>
+      <div className="flex items-center justify-between border-b border-border py-3">
+  <span className="text-sm font-medium text-light">
+    Name
+  </span>
 
-      <p>
-        <span className="text-light">
-          Model:
-        </span>{" "}
-        {productDetails.data.model || "-"}
-      </p>
+  <span className="text-sm font-medium text-dark">
+    {productDetails.data.name || "-"}
+  </span>
+</div>
 
-      <p>
-        <span className="text-light">
-          Price:
-        </span>{" "}
-        AED {productDetails.data.price || "-"}
-      </p>
+      <div className="flex items-center justify-between border-b border-border py-3">
+  <span className="text-sm font-medium text-light">
+    Model
+  </span>
 
-      <p>
-  <span className="text-light">
-    Condition:
-  </span>{" "}
-  {productDetails.data.conditionGrade || "-"}
-</p>
+  <span className="text-sm font-medium text-dark">
+    {productDetails.data.name || "-"}
+  </span>
+</div>
 
-      <p>
-        <span className="text-light">
-          Status:
-        </span>{" "}
-        {productDetails.data.status || "-"}
-      </p>
+      <div className="flex items-center justify-between border-b border-border py-3">
+  <span className="text-sm font-medium text-light">
+    Price
+  </span>
+
+  <span className="text-sm font-medium text-dark">
+    {productDetails.data.name || "-"}
+  </span>
+</div>
+
+      <div className="flex items-center justify-between border-b border-border py-3">
+  <span className="text-sm font-medium text-light">
+    Condition
+  </span>
+
+  <span className="text-sm font-medium text-dark">
+    {productDetails.data.name || "-"}
+  </span>
+</div>
+
+      <div className="flex items-center justify-between border-b border-border py-3">
+  <span className="text-sm font-medium text-light">
+    Status
+  </span>
+
+  <span className="text-sm font-medium text-dark">
+    {productDetails.data.name || "-"}
+  </span>
+</div>
 
     </div>
 
   </Card>
 )}
           </Card>
+          </div>
 
         </div>
           <EditVendorDrawer

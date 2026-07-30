@@ -17,6 +17,10 @@ import VendorList from "../../features/vendors/components/VendorList";
 import VendorDetails from "../../features/vendors/pages/VendorDetails";
 import Categories from "../../pages/Categories";
 import Brands from "../../pages/Brands";
+import Variants from "../../features/variants/pages/Variants";
+import TermsPage from "../../pages/TermsPage";
+import PrivacyPage from "../../pages/PrivacyPage";
+
 
 /**
  * Two route groups:
@@ -28,6 +32,8 @@ export default function AppRouter() {
   return (
     <Routes>
       <Route path={ROUTES.login} element={<LoginPage />} />
+      <Route path="/terms" element={<TermsPage />} />
+      <Route path="/privacy" element={<PrivacyPage />} />
 
       <Route
         element={
@@ -44,6 +50,7 @@ export default function AppRouter() {
         <Route path={ROUTES.productCatalog} element={<ProductCatalog />} />
         <Route path="/categories" element={<Categories />} />
         <Route path="/brands" element={<Brands />} />
+        <Route path="/variants" element={<Variants />} />
         <Route path={ROUTES.fraudReview} element={<FraudReview />} />
         <Route path={ROUTES.allOrders} element={<AllOrders />} />
         <Route path={ROUTES.c2cDrafts} element={<C2CDrafts />} />

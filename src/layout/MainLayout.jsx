@@ -3,10 +3,16 @@ import Sidebar from "../components/sidebar/Sidebar";
 
 export default function MainLayout({ children }) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [openSpecificationModal, setOpenSpecificationModal] = useState(false);
+  const [specificationName, setSpecificationName] = useState("");
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#0d0e12]">
-      <Sidebar mobileOpen={mobileOpen} onClose={() => setMobileOpen(false)} />
+      <Sidebar
+  mobileOpen={mobileOpen}
+  onClose={() => setMobileOpen(false)}
+  onAddNewItem={() => setOpenSpecificationModal(true)}
+/>
 
       <div className="flex-1 flex flex-col min-w-0 bg-white">
         {/* Mobile top bar — hidden on desktop (md+) */}
@@ -34,6 +40,47 @@ export default function MainLayout({ children }) {
         <main className="flex-1 overflow-y-auto overflow-x-hidden bg-white">
           {children}
         </main>
+        {openSpecificationModal && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+    <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+      <h2 className="text-xl font-semibold text-gray-900">
+        Add New Specification
+      </h2>
+
+      <div className="mt-5">
+        <label className="mb-2 block text-sm font-medium text-gray-700">
+          New Specification Name
+        </label>
+
+        <input
+  type="text"
+  value={specificationName}
+  onChange={(e) => setSpecificationName(e.target.value)}
+  placeholder="Enter specification name"
+  className="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:border-orange-500 focus:outline-none"
+/>
+      </div>
+
+      <div className="mt-6 flex justify-end gap-3">
+        <button
+          onClick={() => {
+  setOpenSpecificationModal(false);
+  setSpecificationName("");
+}}
+          className="rounded-lg border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-100"
+        >
+          Cancel
+        </button>
+
+        <button
+          className="rounded-lg bg-orange-500 px-5 py-2 text-white hover:bg-orange-600"
+        >
+          Create
+        </button>
+      </div>
+    </div>
+  </div>
+)}
       </div>
     </div>
   );
