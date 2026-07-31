@@ -23,9 +23,19 @@ api.interceptors.response.use(
     const original = error.config;
     const status = error.response?.status;
 
-    const isAuthRequest = original?.url?.includes("/auth/admin/login");
+    const isAuthRequest =
+    original?.url?.includes("/auth/admin/login");
 
-    if (status === 401 && original && !original._retry && !isAuthRequest) {
+    const isPolicyRequest =
+    original?.url?.includes("/admin/policies");
+
+    if (
+      status === 401 &&
+      original &&
+      !original._retry &&
+      !isAuthRequest &&
+      !isPolicyRequest
+      ) {
       original._retry = true;
       try {
         refreshPromise = refreshPromise ?? requestNewAccessToken();

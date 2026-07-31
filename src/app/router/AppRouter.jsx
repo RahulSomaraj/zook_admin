@@ -18,8 +18,8 @@ import VendorDetails from "../../features/vendors/pages/VendorDetails";
 import Categories from "../../pages/Categories";
 import Brands from "../../pages/Brands";
 import Variants from "../../features/variants/pages/Variants";
-import TermsPage from "../../pages/TermsPage";
-import PrivacyPage from "../../pages/PrivacyPage";
+import TermsPage from "../../features/policies/pages/TermsPage";
+import PrivacyPage from "../../features/policies/pages/PrivacyPage";
 
 
 /**

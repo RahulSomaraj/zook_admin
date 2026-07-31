@@ -161,14 +161,14 @@ export default function LoginPage() {
     to="/terms"
     className="font-medium text-orange-500 hover:text-orange-600 hover:underline"
   >
-    Terms of Use
+    Terms &amp; Conditions
   </Link>
-  {", and "}
+  {" and "}
   <Link
     to="/privacy"
     className="font-medium text-orange-500 hover:text-orange-600 hover:underline"
   >
-    Privacy &amp; Cookies Statement
+    Privacy Policy
   </Link>
   .
 </div>

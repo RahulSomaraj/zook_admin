@@ -1,6 +1,6 @@
-import axios from "../../../lib/axios";
+import { api } from "../../../lib/axios";
 
 export const fetchSpecifications = async () => {
-  const { data } = await axios.get("/admin/specifications");
+  const { data } = await api.get("/admin/specifications");
   return data;
 };
