@@ -12,6 +12,7 @@ import {
   FileText,
   Building2,
   IdCard,
+  Truck,
 } from "lucide-react";
 import {
   useVendor,
@@ -41,7 +42,9 @@ export default function VendorDetails() {
 
   const profileRef = useRef(null);
   const kycRef = useRef(null);
+  const deliveryRef = useRef(null);
   const productsRef = useRef(null);
+  
   const scrollToSection = (ref) => {
   ref.current?.scrollIntoView({
     behavior: "smooth",
@@ -190,6 +193,12 @@ const handleDelete = () => {
   onClick={() => scrollToSection(kycRef)}
   className="py-3 text-sm font-medium text-mid border-b-2 border-transparent whitespace-nowrap cursor-pointer hover:text-dark">
   KYC & Documents
+</div>
+<div
+  onClick={() => scrollToSection(deliveryRef)}
+  className="py-3 text-sm font-medium text-mid border-b-2 border-transparent whitespace-nowrap cursor-pointer hover:text-dark"
+>
+  Delivery Settings
 </div>
           <div onClick={() => scrollToSection(productsRef)} 
             className="py-3 text-sm font-medium text-mid border-b-2 border-transparent whitespace-nowrap cursor-pointer hover:text-dark">
@@ -365,6 +374,62 @@ KYC Status</span>
             </div>
           </Card>
           </div>
+          {/* Delivery Settings Card */}
+<div ref={deliveryRef}>
+  <Card className="p-6">
+
+    <div className="mb-6 flex items-center gap-3">
+
+      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-pale">
+        <Truck size={20} className="text-primary" />
+      </div>
+
+      <div>
+        <h3 className="text-xl font-semibold text-black">
+          Delivery Settings
+        </h3>
+
+        <p className="text-sm text-light">
+          Configure the default delivery fee for this vendor.
+        </p>
+      </div>
+
+    </div>
+
+    <div className="space-y-4">
+
+      <div>
+        <label className="block text-sm font-medium text-dark mb-2">
+          Default Delivery Fee
+        </label>
+
+        <div className="relative">
+          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-light">
+            AED
+          </span>
+
+          <input
+            type="number"
+            placeholder="50"
+            className="w-full rounded-lg border border-border py-3 pl-14 pr-4 focus:border-primary focus:outline-none"
+          />
+        </div>
+      </div>
+
+      <p className="text-xs text-light">
+        This amount will be charged as the default delivery fee for every order from this vendor.
+      </p>
+
+      <div className="pt-2">
+        <Button>
+          Update Delivery Fee
+        </Button>
+      </div>
+
+    </div>
+
+  </Card>
+</div>
 
           {/* Products Card */}
           <div ref={productsRef}>

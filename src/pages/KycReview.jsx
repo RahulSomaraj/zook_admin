@@ -280,6 +280,13 @@ export default function KycReview() {
                   <DetailRow
                     label="Trade License"
                     value={vendor?.tradeLicenseNumber || "N/A"}/>
+                  <DetailRow
+                    label="Expiry Date"
+                    value={
+                    vendor?.tradeLicenseExpiryDate
+                    ? new Date(vendor.tradeLicenseExpiryDate).toLocaleDateString("en-GB")
+                    : "N/A"
+                    }/>
               </div>
             </div>
 

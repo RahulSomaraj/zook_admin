@@ -255,6 +255,7 @@ export default function VendorList() {
                   <th className="py-4 px-4">Email</th>
                   <th className="py-4 px-4">Phone</th>
                   <th className="py-4 px-4">Commission</th>
+                  <th className="py-4 px-4">Delivery Fee</th>
                   <th className="py-4 px-4">Products</th>
                   <th className="py-4 px-4 text-center">KYC Status</th>
                 </tr>
@@ -292,6 +293,10 @@ export default function VendorList() {
                     {/* Commission */}
                     <td className="py-3.5 px-4 font-semibold text-dark">
                       {vendor.commissionRate !== undefined ? `${vendor.commissionRate}%` : "-"}
+                    </td>
+                    {/* Delivery Fee */}
+                    <td className="py-3.5 px-4 font-semibold text-dark">
+                      AED 50
                     </td>
                     
                     {/* Products Total */}
