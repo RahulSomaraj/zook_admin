@@ -1,13 +1,9 @@
 import { Link } from "react-router-dom";
-import { usePolicies } from "../hooks/usePolicies";
+import { useTermsPolicy } from "../hooks/usePolicies";
 
 export default function TermsPage() {
-  const { data, isLoading, isError } = usePolicies({
-    type: "terms_and_conditions",
-    isActive: true,
-  });
-
-  const policy = data?.data?.items?.[0];
+  const { data, isLoading, isError } = useTermsPolicy();
+  const policy = data?.data;
 
   return (
     <div className="min-h-screen bg-gray-50 py-10 px-6">

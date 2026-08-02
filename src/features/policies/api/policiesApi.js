@@ -1,9 +1,6 @@
 import { api } from "../../../lib/axios";
 
-export const fetchPolicies = async (params = {}) => {
-  const { data } = await api.get("/admin/policies", {
-    params,
-  });
-
+export const fetchPolicy = async (type) => {
+  const { data } = await api.get(`/policies/${type}`);
   return data;
 };

@@ -1,13 +1,9 @@
 import { Link } from "react-router-dom";
-import { usePolicies } from "../hooks/usePolicies";
+import { usePrivacyPolicy } from "../hooks/usePolicies";
 
 export default function PrivacyPage() {
-  const { data, isLoading, isError } = usePolicies({
-    type: "privacy_policy",
-    isActive: true,
-  });
-
-  const policy = data?.data?.items?.[0];
+  const { data, isLoading, isError } = usePrivacyPolicy();
+  const policy = data?.data;
 
   return (
     <div className="min-h-screen bg-gray-50 py-10 px-6">
