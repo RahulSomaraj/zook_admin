@@ -51,6 +51,7 @@ function EditCategoryPanel({
     isActive: category.isActive,
     sortOrder: category.sortOrder,
   });
+  const [specifications, setSpecifications] = useState([]);
 
   useEffect(() => {
     setForm({
@@ -114,6 +115,61 @@ function EditCategoryPanel({
             }
           />
         </FormField>
+        <div className="mb-4">
+  <label className="block text-xs font-semibold text-gray-700 mb-2">
+    Specifications
+  </label>
+  {specifications.map((spec, index) => (
+  <div key={index} className="flex items-center gap-2 mb-2">
+  <input
+    type="text"
+    placeholder="Enter specification"
+    value={spec.label}
+    onChange={(e) => {
+      const updated = [...specifications];
+      updated[index].label = e.target.value;
+      setSpecifications(updated);
+    }}
+    className={inputCls}
+  />
+
+  <button
+    type="button"
+    onClick={() =>
+      setSpecifications(
+        specifications.filter((_, i) => i !== index)
+      )
+    }
+    className="w-9 h-9 rounded-lg border border-slate-200 hover:bg-red-50 hover:text-red-600"
+  >
+    ✕
+  </button>
+</div>
+))}
+
+  <button
+  type="button"
+  disabled={specifications.length >= 6}
+  onClick={() => {
+    if (specifications.length < 6) {
+      setSpecifications([
+        ...specifications,
+        { label: "" },
+      ]);
+    }
+  }}
+  className={`flex items-center gap-2 ${
+    specifications.length >= 6
+      ? "text-gray-400 cursor-not-allowed"
+      : "text-orange-500 hover:text-orange-600"
+  }`}
+>
+  <Plus size={16} />
+  <span className="text-sm font-medium">
+    Add Specification
+  </span>
+</button>
+</div>
         <div className="flex justify-between mt-6">
           <button
             onClick={onClose}
