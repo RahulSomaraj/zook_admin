@@ -1,6 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchProductById } from "../api/catalogApi";
-import { createCategorySpecification } from "../api/categorySpecificationsApi";
+import {
+  createCategorySpecification,
+  getCategorySpecifications,
+} from "../api/categorySpecificationsApi";
 
 
 import {
@@ -249,5 +252,13 @@ export function useCreateCategorySpecification() {
         queryKey: ["category-specifications"],
       });
     },
+  });
+}
+
+export function useCategorySpecifications(categoryId) {
+  return useQuery({
+    queryKey: ["category-specifications", categoryId],
+    queryFn: () => getCategorySpecifications(categoryId),
+    enabled: !!categoryId,
   });
 }

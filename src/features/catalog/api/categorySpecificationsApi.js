@@ -8,3 +8,13 @@ export const createCategorySpecification = async (payload) => {
 
   return data;
 };
+
+export const getCategorySpecifications = async (categoryId) => {
+  const { data } = await api.get("/admin/category-specifications", {
+    params: {
+      categoryId,
+    },
+  });
+
+  return data;
+};
