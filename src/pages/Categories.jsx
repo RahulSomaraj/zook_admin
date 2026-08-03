@@ -4,6 +4,7 @@ import {
   useUpdateCategory,
   useDeleteCategory,
   useRestoreCategory,
+  useCreateCategorySpecification,
 } from "../features/catalog/hooks/useCatalog";
 
 import { useState, useEffect } from "react";
@@ -177,7 +178,7 @@ function EditCategoryPanel({
             Cancel
           </button>
           <button
-            onClick={() => onSave(form)}
+            onClick={() => onSave(form, specifications)}
             disabled={isPending}
             className="bg-orange-500 text-white px-4 py-2 rounded-lg">
             {isPending
@@ -197,6 +198,7 @@ export default function Categories() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const createCategory = useCreateCategory();
+  const createCategorySpecification = useCreateCategorySpecification();
   const [editingCategory, setEditingCategory] = useState(null);
   const emptyCategory = {
     id: null,
@@ -207,7 +209,7 @@ export default function Categories() {
     sortOrder: 0,
   };
   const updateCategory = useUpdateCategory();
-  const handleSave = (form) => {
+  const handleSave = async (form, specifications) => {
   if (editingCategory?.id) {
     updateCategory.mutate({
       id: editingCategory.id,
@@ -228,20 +230,32 @@ export default function Categories() {
       }
     );
   } else {
-    createCategory.mutate(form, {
-      onSuccess: () => {
-        alert("Category created successfully!");
-        setEditingCategory(null);
-      },
+  try {
+    const response = await createCategory.mutateAsync(form);
 
-      onError: (error) => {
-        alert(
-          error?.response?.data?.message ||
-            "Failed to create category."
-        );
-      },
-    });
+    const categoryId = response.data.id;
+
+    for (let i = 0; i < specifications.length; i++) {
+  const spec = specifications[i];
+
+  if (!spec.label.trim()) continue;
+
+  await createCategorySpecification.mutateAsync({
+    categoryId,
+    label: spec.label,
+    sortOrder: i,
+    isActive: true,
+  });
+}
+alert("Category created successfully!");
+setEditingCategory(null);
+  } catch (error) {
+    alert(
+      error?.response?.data?.message ||
+        "Failed to create category."
+    );
   }
+}
 };
 
 const restoreCategory = useRestoreCategory();
