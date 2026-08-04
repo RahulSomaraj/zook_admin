@@ -108,3 +108,10 @@ export async function fetchProductById(id) {
   const { data } = await api.get(`/admin/products/${id}`);
   return data;
 }
+
+export const deleteCategorySpecification = async (id) => {
+  const { data } = await api.delete(
+    `/admin/category-specifications/${id}`
+  );
+  return data;
+};

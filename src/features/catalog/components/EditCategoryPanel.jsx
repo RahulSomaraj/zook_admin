@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
 import { Plus } from "lucide-react";
+import { useCategorySpecifications,
+        useDeleteCategorySpecification,
+       } from "../hooks/useCatalog";
 
 function SectionLabel({ children }) {
   return (
@@ -33,6 +36,8 @@ export default function EditCategoryPanel({
     sortOrder: category.sortOrder,
   });
   const [specifications, setSpecifications] = useState([]);
+  const { data: specificationData } = useCategorySpecifications(category?.id);
+  const deleteSpecification = useDeleteCategorySpecification();
 
   useEffect(() => {
     setForm({
@@ -43,6 +48,17 @@ export default function EditCategoryPanel({
       sortOrder: category.sortOrder,
     });
   }, [category]);
+
+  useEffect(() => {
+  if (specificationData?.data?.items) {
+    setSpecifications(
+      specificationData.data.items.map((item) => ({
+        id: item.id,
+        label: item.label,
+      }))
+    );
+  }
+}, [specificationData]);
 
   return (
     <div className="w-full lg:w-[340px] lg:min-w-[320px] lg:max-w-[360px] lg:flex-shrink-0 bg-white border-l border-slate-100 flex flex-col overflow-y-auto max-h-screen">
@@ -116,11 +132,24 @@ export default function EditCategoryPanel({
 
   <button
     type="button"
-    onClick={() =>
-      setSpecifications(
-        specifications.filter((_, i) => i !== index)
-      )
+    onClick={async () => {
+  const spec = specifications[index];
+
+  try {
+    if (spec.id) {
+      await deleteSpecification.mutateAsync(spec.id);
     }
+
+    setSpecifications(
+      specifications.filter((_, i) => i !== index)
+    );
+  } catch (error) {
+    alert(
+      error?.response?.data?.message ||
+      "Failed to delete specification."
+    );
+  }
+}}
     className="w-9 h-9 rounded-lg border border-slate-200 hover:bg-red-50 hover:text-red-600"
   >
     ✕

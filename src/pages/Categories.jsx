@@ -5,7 +5,7 @@ import {
   useDeleteCategory,
   useRestoreCategory,
   useCreateCategorySpecification,
-  useCategorySpecifications,
+  useUpdateCategorySpecification,
 } from "../features/catalog/hooks/useCatalog";
 
 import { useState, useEffect } from "react";
@@ -59,26 +59,53 @@ export default function Categories() {
     sortOrder: 0,
   };
   const updateCategory = useUpdateCategory();
+  const updateSpecification = useUpdateCategorySpecification();
   const handleSave = async (form, specifications) => {
   if (editingCategory?.id) {
-    updateCategory.mutate({
-      id: editingCategory.id,
-      payload: form,
-      },
-      {
-        onSuccess: () => {
-          alert("Category updated successfully!");
-          setEditingCategory(null);
-        },
+    try {
+  await updateCategory.mutateAsync({
+    id: editingCategory.id,
+    payload: form,
+  });
 
-        onError: (error) => {
-          alert(
-            error?.response?.data?.message ||
-              "Failed to update category."
-          );
-        },
-      }
-    );
+  for (let i = 0; i < specifications.length; i++) {
+  const spec = specifications[i];
+
+  if (!spec.id) continue;
+
+  await updateSpecification.mutateAsync({
+    id: spec.id,
+    payload: {
+      label: spec.label,
+      sortOrder: i,
+      isActive: true,
+    },
+  });
+}
+
+for (let i = 0; i < specifications.length; i++) {
+  const spec = specifications[i];
+
+  if (spec.id) continue;
+
+  if (!spec.label.trim()) continue;
+
+  await createCategorySpecification.mutateAsync({
+    categoryId: editingCategory.id,
+    label: spec.label,
+    sortOrder: i,
+    isActive: true,
+  });
+}
+
+  alert("Category updated successfully!");
+  setEditingCategory(null);
+} catch (error) {
+  alert(
+    error?.response?.data?.message ||
+      "Failed to update category."
+  );
+}
   } else {
   try {
     const response = await createCategory.mutateAsync(form);

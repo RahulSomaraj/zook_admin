@@ -18,3 +18,12 @@ export const getCategorySpecifications = async (categoryId) => {
 
   return data;
 };
+
+export const updateCategorySpecification = async ({ id, payload }) => {
+  const { data } = await api.patch(
+    `/admin/category-specifications/${id}`,
+    payload
+  );
+
+  return data;
+};

@@ -3,6 +3,7 @@ import { fetchProductById } from "../api/catalogApi";
 import {
   createCategorySpecification,
   getCategorySpecifications,
+  updateCategorySpecification,
 } from "../api/categorySpecificationsApi";
 
 
@@ -23,6 +24,7 @@ import {
   updateCatalogProduct,
   deleteCatalogProduct,
   restoreCatalogProduct,
+  deleteCategorySpecification,
 } from "../api/catalogApi";
 
 export const useDeleteCatalogProduct = () => {
@@ -260,5 +262,33 @@ export function useCategorySpecifications(categoryId) {
     queryKey: ["category-specifications", categoryId],
     queryFn: () => getCategorySpecifications(categoryId),
     enabled: !!categoryId,
+  });
+}
+
+export function useUpdateCategorySpecification() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: updateCategorySpecification,
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["category-specifications"],
+      });
+    },
+  });
+}
+
+export function useDeleteCategorySpecification() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: deleteCategorySpecification,
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["category-specifications"],
+      });
+    },
   });
 }
